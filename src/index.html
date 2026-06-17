@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kismet House</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1A5A7A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kismet">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root {
+  --sky:#C8E8F5;--ocean:#2E7DAB;--ocean-dark:#1A5A7A;--sand:#F7EDD0;--sand-mid:#EDD99A;
+  --sand-dark:#C9A84C;--wood:#8B6340;--wood-light:#C4956A;--leaf:#4A8C5C;
+  --bronze:#B87333;--bronze-bg:#FBF0E3;--silver:#909090;--silver-bg:#F2F2F2;
+  --gold:#C9A227;--gold-bg:#FEF9E7;--cream:#FDFAF2;--text:#2C1E0F;--muted:#7A6247;
+  --danger:#c0392b;--radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--sky);color:var(--text);min-height:100vh;}
+.site-header{background:var(--ocean-dark);position:relative;text-align:center;overflow:hidden;}
+.header-rope{position:absolute;top:10px;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,var(--sand-dark) 0 8px,var(--wood-light) 8px 16px);opacity:0.6;}
+.header-inner{padding:2rem 1rem 2.2rem;}
+.site-title{font-family:'Lilita One',cursive;font-size:3rem;color:var(--sand);letter-spacing:1px;text-shadow:3px 3px 0 rgba(0,0,0,0.3);line-height:1;}
+.site-sub{font-size:.75rem;color:var(--sky);letter-spacing:3px;text-transform:uppercase;margin-top:6px;font-weight:700;}
+.wave-divider{display:block;width:100%;height:38px;}
+.sync-bar{background:var(--sand);border-bottom:2px solid var(--sand-mid);padding:6px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.sync-dot{width:9px;height:9px;border-radius:50%;background:#ccc;flex-shrink:0;transition:background .3s;}
+.sync-dot.live{background:#4A8C5C;}
+.sync-dot.err{background:#c0392b;}
+.sync-label{font-size:11px;font-weight:800;color:var(--muted);}
+.main-nav{background:var(--sand);display:flex;gap:6px;padding:10px 16px;border-bottom:3px solid var(--sand-mid);flex-wrap:wrap;}
+.nav-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;padding:7px 18px;border-radius:99px;border:2.5px solid var(--sand-dark);background:var(--cream);color:var(--wood);cursor:pointer;transition:all .15s;}
+.nav-btn:hover{background:var(--sand-mid);border-color:var(--wood);}
+.nav-btn.active{background:var(--ocean);color:white;border-color:var(--ocean-dark);}
+main{padding:1.25rem 1.25rem 5rem;max-width:1100px;margin:0 auto;}
+.section-title{font-family:'Lilita One',cursive;font-size:1.6rem;color:var(--ocean-dark);margin:1.25rem 0 .9rem;}
+.player-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px;}
+.player-card{background:var(--cream);border-radius:var(--radius);padding:1rem .75rem .85rem;text-align:center;cursor:pointer;border:3px solid var(--sand-mid);transition:all .15s;box-shadow:3px 3px 0 var(--sand-dark);}
+.player-card:hover{border-color:var(--ocean);transform:translateY(-3px);box-shadow:3px 6px 0 var(--ocean);}
+.p-avatar{width:54px;height:54px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;border:3px solid rgba(255,255,255,0.6);}
+.p-name{font-size:13px;font-weight:800;color:var(--text);}
+.p-count{font-size:11px;color:var(--muted);margin-top:3px;font-weight:600;}
+.p-pips{display:flex;gap:3px;justify-content:center;margin-top:7px;flex-wrap:wrap;}
+.pip{width:9px;height:9px;border-radius:50%;border:1.5px solid rgba(0,0,0,0.1);}
+.profile-header{background:var(--cream);border-radius:var(--radius);padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1.25rem;border:3px solid var(--sand-mid);box-shadow:3px 3px 0 var(--sand-dark);margin-bottom:1rem;flex-wrap:wrap;}
+.profile-avatar{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;border:3px solid rgba(255,255,255,0.5);flex-shrink:0;}
+.profile-name{font-family:'Lilita One',cursive;font-size:1.5rem;color:var(--ocean-dark);line-height:1.1;}
+.profile-stats{display:flex;gap:1.25rem;margin-top:8px;flex-wrap:wrap;}
+.ps{text-align:center;}
+.ps-num{font-size:1.3rem;font-weight:800;line-height:1;}
+.ps-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;}
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;}
+.ach-card{background:var(--cream);border-radius:var(--radius);padding:1rem 1.1rem;border:3px solid var(--sand-mid);box-shadow:3px 3px 0 var(--sand-dark);}
+.ach-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.ach-title{font-family:'Lilita One',cursive;font-size:1rem;color:var(--ocean-dark);line-height:1.2;}
+.tier-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1.5px dashed var(--sand-mid);}
+.tier-label{font-size:9px;font-weight:800;padding:3px 6px;border-radius:99px;text-transform:uppercase;letter-spacing:.2px;flex-shrink:0;width:48px;text-align:center;}
+.tl-bronze{background:var(--bronze-bg);color:var(--bronze);border:1.5px solid var(--bronze);}
+.tl-silver{background:var(--silver-bg);color:#555;border:1.5px solid var(--silver);}
+.tl-gold{background:var(--gold-bg);color:#8A6A00;border:1.5px solid var(--gold);}
+.tier-progress-wrap{flex:1;min-width:0;}
+.tier-desc{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;line-height:1.3;}
+.prog-bar-outer{height:8px;border-radius:99px;background:var(--sand-mid);overflow:hidden;}
+.prog-bar-fill{height:100%;border-radius:99px;transition:width .4s;}
+.prog-label{font-size:10px;font-weight:800;color:var(--muted);margin-top:2px;text-align:right;}
+.stepper{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.step-btn{width:26px;height:26px;border-radius:50%;border:2px solid var(--sand-dark);background:var(--cream);font-size:15px;font-weight:800;color:var(--wood);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s;font-family:'Nunito',sans-serif;line-height:1;}
+.step-btn:hover{background:var(--sand-mid);}
+.check-toggle{width:28px;height:28px;border-radius:50%;border:2.5px solid var(--sand-dark);background:var(--cream);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s;flex-shrink:0;color:transparent;}
+.check-toggle:hover{border-color:var(--leaf);}
+.check-toggle.done{background:var(--leaf);border-color:var(--leaf);color:white;}
+.check-toggle.done:hover{background:var(--danger);border-color:var(--danger);}
+.leaderboard{background:var(--cream);border-radius:var(--radius);border:3px solid var(--sand-mid);box-shadow:3px 3px 0 var(--sand-dark);overflow:hidden;}
+.lb-row{display:flex;align-items:center;gap:12px;padding:11px 1.25rem;border-bottom:1.5px dashed var(--sand-mid);cursor:pointer;transition:background .1s;}
+.lb-row:hover{background:#EAF6FF;}
+.lb-row:last-child{border-bottom:none;}
+.lb-rank{font-family:'Lilita One',cursive;font-size:1.1rem;width:28px;text-align:center;flex-shrink:0;color:var(--muted);}
+.lb-rank.r1{color:var(--gold);}.lb-rank.r2{color:var(--silver);}.lb-rank.r3{color:var(--bronze);}
+.lb-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.lb-name{font-weight:800;font-size:14px;flex:1;}
+.lb-right{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center;}
+.fish-table{width:100%;border-collapse:collapse;background:var(--cream);border-radius:var(--radius);overflow:hidden;border:3px solid var(--sand-mid);box-shadow:3px 3px 0 var(--sand-dark);}
+.fish-table th{background:var(--ocean-dark);color:var(--sand);padding:10px 14px;font-size:12px;font-weight:800;text-align:left;letter-spacing:1px;text-transform:uppercase;}
+.fish-table td{padding:9px 14px;font-size:13px;border-bottom:1.5px dashed var(--sand-mid);vertical-align:middle;}
+.fish-table tr:last-child td{border-bottom:none;}
+.fish-table tr:hover td{background:#EAF6FF;}
+.fish-name{font-weight:700;color:var(--ocean-dark);}
+.catcher-tag{position:relative;display:inline-flex;align-items:center;font-size:11px;background:#D4EEF7;color:var(--ocean-dark);padding:3px 22px 3px 9px;border-radius:99px;font-weight:700;margin:2px;cursor:default;}
+.catcher-tag .tag-x{position:absolute;right:5px;top:50%;transform:translateY(-50%);font-size:11px;color:transparent;cursor:pointer;line-height:1;transition:color .15s;font-weight:900;}
+.catcher-tag:hover .tag-x{color:var(--danger);}
+.catcher-tag:hover{background:#fce4e4;}
+.fish-btn{font-size:11px;padding:4px 12px;border-radius:99px;border:2px solid var(--ocean);background:var(--cream);color:var(--ocean);cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;transition:all .15s;white-space:nowrap;}
+.fish-btn:hover{background:var(--ocean);color:white;}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(20,40,60,.55);z-index:200;align-items:center;justify-content:center;}
+.modal-backdrop.open{display:flex;}
+.modal-box{background:var(--cream);border-radius:var(--radius);border:3px solid var(--sand-mid);box-shadow:4px 4px 0 var(--sand-dark);padding:1.5rem;width:92%;max-width:400px;max-height:85vh;overflow-y:auto;}
+.modal-title{font-family:'Lilita One',cursive;font-size:1.3rem;color:var(--ocean-dark);margin-bottom:1rem;}
+.modal-close-btn{float:right;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);line-height:1;}
+.modal-label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;margin-top:10px;}
+.modal-box select,.modal-box input[type=text],.modal-box input[type=number]{width:100%;padding:9px 12px;border:2px solid var(--sand-mid);border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--text);background:white;}
+.modal-submit{width:100%;padding:11px;background:var(--ocean);color:white;border:none;border-radius:10px;font-family:'Lilita One',cursive;font-size:1rem;cursor:pointer;margin-top:14px;transition:background .15s;}
+.modal-submit:hover{background:var(--ocean-dark);}
+.map-outer{position:relative;background:var(--cream);border-radius:var(--radius);border:3px solid var(--sand-mid);box-shadow:3px 3px 0 var(--sand-dark);overflow:hidden;}
+.map-outer svg{display:block;width:100%;}
+.map-tip{position:absolute;z-index:20;pointer-events:none;opacity:0;transition:opacity .15s;}
+.map-tip.on{opacity:1;}
+.map-tip-box{background:#1A365D;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;padding:8px 12px;border-radius:10px;border:2px solid var(--sand-dark);min-width:160px;box-shadow:2px 2px 0 rgba(0,0,0,0.2);}
+.map-tip-title{font-family:'Lilita One',cursive;font-size:14px;color:var(--sand-mid);margin-bottom:5px;}
+.map-tip-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:2px 0;font-size:11px;}
+.map-lm{cursor:pointer;}
+.fish-card-tooltip{position:absolute;z-index:30;pointer-events:none;opacity:0;transition:opacity .15s;background:var(--ocean-dark);color:#fff;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;padding:8px 12px;border-radius:10px;border:2px solid var(--sand-dark);width:220px;box-shadow:2px 2px 0 rgba(0,0,0,0.2);line-height:1.5;}
+.fish-card-tooltip.on{opacity:1;}
+.fish-card-wrap{position:relative;cursor:pointer;}
+.fab-wrap{position:fixed;bottom:1.5rem;right:1.5rem;z-index:100;}
+.tl-bronze{background:var(--bronze-bg);color:var(--bronze);border:1.5px solid var(--bronze);display:flex;align-items:center;justify-content:center;}
+.fab{background:var(--ocean-dark);color:var(--sand);border:none;border-radius:99px;padding:12px 22px;font-family:'Lilita One',cursive;font-size:1rem;cursor:pointer;box-shadow:3px 3px 0 var(--ocean);transition:transform .1s;}
+.fab:hover{transform:scale(1.04);}
+.back-btn{background:none;border:none;color:var(--ocean);font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;padding:4px 0;margin-bottom:8px;display:inline-flex;align-items:center;gap:4px;}
+.loading{text-align:center;padding:4rem 1rem;font-family:'Lilita One',cursive;font-size:1.4rem;color:var(--ocean-dark);}
+
+/* ── PHOTO THUMBNAIL in tier row ── */
+.tier-photo-thumb{width:36px;height:36px;border-radius:8px;object-fit:cover;border:2px solid var(--sand-mid);cursor:pointer;flex-shrink:0;transition:transform .15s;}
+.tier-photo-thumb:hover{transform:scale(1.08);border-color:var(--ocean);}
+.tier-cam-placeholder{width:36px;height:36px;border-radius:8px;border:2px dashed var(--sand-dark);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0;opacity:0.5;transition:opacity .15s;}
+.tier-cam-placeholder:hover{opacity:1;border-color:var(--ocean);}
+
+/* ── PHOTO LIGHTBOX ── */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:92vw;max-height:80vh;border-radius:12px;border:3px solid var(--sand);}
+.lightbox-close{background:var(--sand);border:none;border-radius:99px;padding:8px 22px;font-family:'Lilita One',cursive;font-size:1rem;cursor:pointer;color:var(--ocean-dark);}
+.lightbox-caption{color:var(--sand);font-size:13px;font-weight:700;text-align:center;}
+
+/* ── PHOTO PROMPT MODAL ── */
+.photo-prompt-box{background:var(--cream);border-radius:var(--radius);border:3px solid var(--sand-mid);box-shadow:4px 4px 0 var(--sand-dark);padding:1.5rem;width:92%;max-width:380px;}
+.photo-preview{width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-top:10px;display:none;border:2px solid var(--sand-mid);}
+.photo-upload-area{border:2.5px dashed var(--sand-dark);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;margin-top:10px;transition:border-color .15s;background:white;}
+.photo-upload-area:hover{border-color:var(--ocean);}
+.photo-upload-area input[type=file]{display:none;}
+.btn-skip{width:100%;padding:10px;background:transparent;color:var(--muted);border:2px solid var(--sand-mid);border-radius:10px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;margin-top:8px;transition:all .15s;}
+.btn-skip:hover{border-color:var(--wood);color:var(--wood);}
+
+/* ── FEED ── */
+.feed-empty{text-align:center;padding:3rem 1rem;color:var(--muted);font-weight:700;font-size:14px;}
+.feed-card{background:var(--cream);border-radius:var(--radius);border:3px solid var(--sand-mid);box-shadow:3px 3px 0 var(--sand-dark);padding:1rem 1.1rem;margin-bottom:12px;}
+.feed-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.feed-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.feed-meta{flex:1;}
+.feed-who{font-weight:800;font-size:14px;color:var(--text);}
+.feed-what{font-size:12px;color:var(--muted);margin-top:1px;line-height:1.4;}
+.feed-time{font-size:10px;color:var(--muted);font-weight:700;flex-shrink:0;}
+.feed-photo{width:100%;border-radius:10px;object-fit:cover;max-height:320px;border:2px solid var(--sand-mid);cursor:pointer;margin-top:4px;}
+.feed-tier-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;padding:3px 8px;border-radius:99px;margin-left:4px;}
+.feed-tier-bronze{background:var(--bronze-bg);color:var(--bronze);border:1.5px solid var(--bronze);}
+.feed-tier-silver{background:var(--silver-bg);color:#555;border:1.5px solid var(--silver);}
+.feed-tier-gold{background:var(--gold-bg);color:#8A6A00;border:1.5px solid var(--gold);}
+
+@media(max-width:600px){.site-title{font-size:2rem;}main{padding:1rem .75rem 5rem;}.ach-grid{grid-template-columns:1fr;}}
+
+/* ── WHO PICKER OVERLAY ── */
+.who-overlay{display:none;position:fixed;inset:0;background:var(--sky);z-index:1000;overflow-y:auto;padding:2rem 1.25rem 3rem;}
+.who-overlay.open{display:block;}
+.who-overlay-title{font-family:'Lilita One',cursive;font-size:2rem;color:var(--ocean-dark);text-align:center;margin-bottom:.4rem;}
+.who-overlay-sub{text-align:center;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:1.5rem;}
+.who-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;max-width:600px;margin:0 auto;}
+.who-card{background:var(--cream);border-radius:var(--radius);padding:1.25rem .75rem 1rem;text-align:center;cursor:pointer;border:3px solid var(--sand-mid);transition:all .15s;box-shadow:3px 3px 0 var(--sand-dark);}
+.who-card:hover{border-color:var(--ocean);transform:translateY(-3px);box-shadow:3px 6px 0 var(--ocean);}
+.who-card-avatar{width:60px;height:60px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;border:3px solid rgba(255,255,255,0.6);}
+.who-card-name{font-size:14px;font-weight:800;color:var(--text);}
+.playing-as-bar{background:var(--ocean-dark);padding:5px 16px;display:flex;align-items:center;gap:8px;}
+.playing-as-chip{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--sand);}
+.playing-as-switch{margin-left:auto;font-size:11px;font-weight:800;color:var(--sky);background:none;border:1.5px solid rgba(255,255,255,0.3);border-radius:99px;padding:3px 10px;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;}
+.playing-as-switch:hover{background:rgba(255,255,255,0.15);}
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="header-rope"></div>
+  <div class="header-inner">
+    <div class="site-title">&#127958; Kismet House</div>
+    <div class="site-sub">Fire Island Achievement Tracker</div>
+  </div>
+  <svg class="wave-divider" viewBox="0 0 1200 38" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,19 C200,38 400,0 600,19 C800,38 1000,0 1200,19 L1200,38 L0,38 Z" fill="#C8E8F5"/>
+  </svg>
+</div>
+
+<!-- WHO PICKER OVERLAY -->
+<div class="who-overlay" id="whoOverlay">
+  <div style="text-align:center;font-size:3rem;margin-bottom:.5rem">🏖️</div>
+  <div class="who-overlay-title">Kismet House</div>
+  <div class="who-overlay-sub">Who's playing?</div>
+  <div class="who-grid" id="whoGrid"></div>
+</div>
+
+<div class="sync-bar">
+  <div class="sync-dot" id="syncDot"></div>
+  <span class="sync-label" id="syncLabel">Connecting...</span>
+</div>
+
+<div class="playing-as-bar" id="playingAsBar" style="display:none;">
+  <div class="playing-as-chip" id="playingAsChip"></div>
+  <button class="playing-as-switch" onclick="openWhoOverlay(true)">Switch</button>
+</div>
+
+<nav class="main-nav" id="mainNav">
+  <button class="nav-btn active" onclick="showView('home')">&#127968; Home</button>
+  <button class="nav-btn" onclick="showView('achievements')">&#127894; All Badges</button>
+  <button class="nav-btn" onclick="showView('feed')">&#128247; Family Feed</button>
+  <button class="nav-btn" onclick="showView('map')">&#128506; Map</button>
+  <button class="nav-btn" onclick="showView('fishing')">&#127907; Fishing Registry</button>
+</nav>
+
+<main id="appMain"><div class="loading">&#127958; Loading Kismet...</div></main>
+
+<div class="fab-wrap"><button class="fab" onclick="openLogModal()">+ Log Progress</button></div>
+
+<!-- LOG MODAL -->
+<div class="modal-backdrop" id="logModal">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeModal('logModal')">&#10005;</button>
+    <div class="modal-title">Log Progress</div>
+    <span class="modal-label">Who?</span><select id="logPerson"></select>
+    <span class="modal-label">Badge</span><select id="logBadge" onchange="renderLogTierOptions()"></select>
+    <span class="modal-label">Tier</span><select id="logTier" onchange="renderLogProgressField()"></select>
+    <div id="logProgressWrap" style="margin-top:10px;"></div>
+    <button class="modal-submit" onclick="saveLog()">Save</button>
+  </div>
+</div>
+
+<!-- FISH MODAL -->
+<div class="modal-backdrop" id="fishModal">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeModal('fishModal')">&#10005;</button>
+    <div class="modal-title" id="fishModalTitle">Log Catch</div>
+    <span class="modal-label">Who caught it?</span><select id="fishPerson"></select>
+    <button class="modal-submit" onclick="saveFish()">Save Catch</button>
+  </div>
+</div>
+
+<!-- PHOTO PROMPT MODAL -->
+<div class="modal-backdrop" id="photoModal">
+  <div class="photo-prompt-box">
+    <button class="modal-close-btn" onclick="cancelPhotoPrompt()" style="float:right;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);line-height:1;">&#10005;</button>
+    <div style="text-align:center;margin-bottom:4px;font-size:2rem" id="photoModalEmoji">🎉</div>
+    <div class="modal-title" style="text-align:center;margin-bottom:4px;" id="photoModalTitle">Badge Earned!</div>
+    <div style="text-align:center;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;" id="photoModalSub"></div>
+    <div class="photo-upload-area" onclick="document.getElementById('photoFileInput').click()">
+      <div style="font-size:2rem">📷</div>
+      <div style="font-size:13px;font-weight:800;color:var(--wood);margin-top:6px;">Tap to add a photo</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px;">Capture this moment (optional)</div>
+      <input type="file" id="photoFileInput" accept="image/*" capture="environment" onchange="handlePhotoSelect(event)">
+    </div>
+    <img id="photoPreview" class="photo-preview" alt="Preview"/>
+    <button class="modal-submit" id="photoSaveBtn" onclick="saveWithPhoto()">Save with Photo</button>
+    <button class="btn-skip" onclick="saveWithoutPhoto()">Skip — save without photo</button>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="" alt=""/>
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+  <button class="lightbox-close" onclick="closeLightbox()">Close</button>
+</div>
+
+<script>
+const PEOPLE = ["Amelia","Aunt Diane","Aunt Sue","Eddie","Emilee","Emma","Hannah","Peter","Uncle Ray"];
+const PERSON_ICONS = {
+  "Peter":"🐵","Amelia":"🐷","Emma":"🐨","Aunt Diane":"🐻","Aunt Sue":"🐼",
+  "Uncle Ray":"🐻‍❄️","Emilee":"🦊","Eddie":"🦁","Hannah":"🐯"
+};
+const AVATARS_BG = ["#D4936B","#8B6340","#C0777A","#6B46C1","#B07340","#4A8C5C","#2C7A7B","#2E7DAB","#1A5A7A"];
+const FISH_LIST = ["Striped Bass","Black Sea Bass","Fluke","Bluefish","Bluefish Snapper","Porgy","Weakfish","Pufferfish","Kingfish","Sea Robin","Skate","Dogfish Shark"];
+const TIER_COLORS = {bronze:"#B87333",silver:"#909090",gold:"#C9A227"};
+const TIER_EMOJI = {bronze:"🥉",silver:"🥈",gold:"🥇"};
+
+const BADGES = [
+  {id:"fishing",icon:"&#127907;",color:"#1A6F8A",name:"Fishing",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Catch a fish",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Catch 5 different species",type:"count",max:5,unit:"species",fishAuto:true},
+    {key:"gold",label:"Gold",desc:"Catch every fish in the Registry (12)",type:"count",max:12,unit:"species",fishAuto:true}
+  ]},
+  {id:"cooking",icon:"&#127859;",color:"#C05621",name:"Cooking",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Make a meal for someone else",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Cook a 3-course meal for the family",type:"boolean",max:1},
+    {key:"gold",label:"Gold",desc:"Cook a meal completely from scratch (min. 3 items incl. a protein)",type:"boolean",max:1}
+  ]},
+  {id:"biking",icon:"&#128690;",color:"#2F855A",name:"Biking",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Leave the town of Kismet on a bike",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:'Say "on your left" to 20 people on a single ride',type:"count",max:20,unit:"people"},
+    {key:"gold",label:"Gold",desc:"Bike from the west end to the east end of Fire Island",type:"boolean",max:1}
+  ]},
+  {id:"community",icon:"&#129309;",color:"#6B46C1",name:"Community",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Attend a community event",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Help with a community event",type:"boolean",max:1},
+    {key:"gold",label:"Gold",desc:"Host a community event",type:"boolean",max:1}
+  ]},
+  {id:"neighbors",icon:"&#127968;",color:"#8B6340",name:"Neighbors",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Meet every neighbor in Camelot",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Invite a neighbor to something",type:"boolean",max:1},
+    {key:"gold",label:"Gold",desc:"Gift a neighbor something",type:"boolean",max:1}
+  ]},
+  {id:"athletics",icon:"&#9917;",color:"#2E7DAB",name:"Athletics",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Introduce a sport to the Kismet house",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Play a sport with a stranger",type:"boolean",max:1},
+    {key:"gold",label:"Gold",desc:"Win 100 games (any sport)",type:"count",max:100,unit:"wins"}
+  ]},
+  {id:"traveler",icon:"&#127758;",color:"#1A5A7A",name:"Traveler",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Visit another town from Kismet",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Visit 5 towns on Fire Island",type:"count",max:5,unit:"towns"},
+    {key:"gold",label:"Gold",desc:"Visit every town on Fire Island (13 towns)",type:"count",max:13,unit:"towns"}
+  ]},
+  {id:"townie",icon:"&#127981;",color:"#B7791F",name:"Townie",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Buy something in town",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Visit every store in town",type:"boolean",max:1},
+    {key:"gold",label:"Gold",desc:"Be on a first-name basis at The Inn and The Dive",type:"boolean",max:1}
+  ]},
+  {id:"mover",icon:"&#127939;",color:"#4A8C5C",name:"Mover",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Walk down every street in Kismet",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Do a 5k on the beach",type:"boolean",max:1},
+    {key:"gold",label:"Gold",desc:"Walk/run to Democrat Point",type:"boolean",max:1}
+  ]},
+  {id:"shellhunter",icon:"&#128026;",color:"#C05621",name:"Shell Hunter",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Find a shell you identify with at the beach",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Find a cool shell and gift it to your best friend",type:"boolean",max:1},
+    {key:"gold",label:"Gold",desc:"Make art mainly composed of shells from the island",type:"boolean",max:1}
+  ]},
+  {id:"kismetlifer",icon:"&#127774;",color:"#2E7DAB",name:"Kismet Lifer",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Spend one night at the house",type:"count",max:1,unit:"night"},
+    {key:"silver",label:"Silver",desc:"Spend three nights in a row",type:"count",max:3,unit:"nights in a row"},
+    {key:"gold",label:"Gold",desc:"Spend 100 nights total at the house",type:"count",max:100,unit:"nights"}
+  ]},
+  {id:"bartender",icon:"&#127864;",color:"#8B4096",name:"Bartender",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Make a cocktail",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Make 3 cocktails each using a different liquor",type:"count",max:3,unit:"cocktails"},
+    {key:"gold",label:"Gold",desc:"Design and make your own signature cocktail",type:"boolean",max:1}
+  ]},
+  {id:"sunspectator",icon:"&#127780;",color:"#D4820A",name:"Sun Spectator",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Watch a full sunset on the beach",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Watch a full sunrise at the beach",type:"boolean",max:1},
+    {key:"gold",label:"Gold",desc:"Watch both a sunrise and sunset on the same day",type:"boolean",max:1}
+  ]},
+  {id:"weathered",icon:"&#127785;",color:"#5A7A9A",name:"Weathered",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Get caught in a rainstorm on the beach",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Swim in the ocean in the rain",type:"boolean",max:1},
+    {key:"gold",label:"Gold",desc:"Experience a named storm at the Kismet house",type:"boolean",max:1}
+  ]},
+  {id:"gamenightchamp",icon:"&#127921;",color:"#7B3FA0",name:"Game Night",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Win a board or card game at the house",type:"boolean",max:1},
+    {key:"silver",label:"Silver",desc:"Win 3 different games",type:"count",max:3,unit:"games"},
+    {key:"gold",label:"Gold",desc:"Go undefeated across a single game night",type:"boolean",max:1}
+  ]},
+  {id:"kismetlegend",icon:"&#127942;",color:"#B8860B",name:"Kismet Legend",tiers:[
+    {key:"bronze",label:"Bronze",desc:"Earn 10 badges total",type:"count",max:10,unit:"badges",legendAuto:true},
+    {key:"silver",label:"Silver",desc:"Earn 25 badges total",type:"count",max:25,unit:"badges",legendAuto:true},
+    {key:"gold",label:"Gold",desc:"Earn every badge across all tiers",type:"count",max:48,unit:"badges",legendAuto:true}
+  ]}
+];
+
+const MAP_LANDMARKS = [
+  {id:'marina', label:'Marina & Dock', badges:['fishing'], cx:352,cy:136},
+  {id:'theinn', label:'The Inn', badges:['townie'], cx:299,cy:161},
+  {id:'thedive', label:'The Dive', badges:['townie'], cx:269,cy:161},
+  {id:'park', label:'Kismet Park', badges:['community','athletics'], cx:287,cy:212},
+  {id:'camelot', label:'Camelot', badges:['kismetlifer','neighbors'], cx:357,cy:640},
+  {id:'beach', label:'Beach', badges:['mover','shellhunter','sunspectator'], cx:350,cy:910},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const LOCAL_SK = 'kismet_v5';
+const WHO_SK = 'kismet_who_v1';
+let currentUser = null; // the logged-in person
+let state = {progress:{},fish:{},events:[]};
+let currentView='home', selectedPlayer=null, pendingFish=null;
+let dbReady = false;
+let firebaseSet = null;
+
+// Photo prompt pending data
+let pendingPhotoContext = null; // {person, badgeId, tierId, badgeName, tierKey, tierDesc, badgeIcon}
+let pendingPhotoBase64 = null;
+
+function emptyState(){
+  const s={progress:{},fish:{},events:[]};
+  PEOPLE.forEach(p=>{
+    s.progress[p]={};s.fish[p]=[];
+    BADGES.forEach(b=>{s.progress[p][b.id]={};b.tiers.forEach(t=>{s.progress[p][b.id][t.key]=0;});});
+  });
+  return s;
+}
+
+function setSyncStatus(status){
+  const dot=document.getElementById('syncDot');
+  const lbl=document.getElementById('syncLabel');
+  if(status==='live'){dot.className='sync-dot live';lbl.style.color='';lbl.textContent='Live — changes sync instantly for everyone';}
+  else if(status==='preview'){dot.className='sync-dot live';lbl.style.color='#B7791F';lbl.textContent='Preview mode — data is local only';}
+  else if(status==='err'){dot.className='sync-dot err';lbl.textContent='Connection error — check internet';}
+  else{dot.className='sync-dot';lbl.textContent='Connecting...';}
+}
+
+function saveState(){
+  if(!dbReady)return;
+  if(firebaseSet){
+    firebaseSet(state);
+  } else {
+    try{localStorage.setItem(LOCAL_SK,JSON.stringify(state));}catch(e){}
+  }
+}
+
+// ── WHO PICKER ───────────────────────────────────────────────────────────────
+function openWhoOverlay(isSwitching=false){
+  const overlay = document.getElementById('whoOverlay');
+  const grid = document.getElementById('whoGrid');
+  grid.innerHTML = PEOPLE.map((p,i) => `
+    <div class="who-card" onclick="selectWho('${p}',${isSwitching})">
+      <div class="who-card-avatar" style="background:${AVATARS_BG[i]}">${PERSON_ICONS[p]}</div>
+      <div class="who-card-name">${p}</div>
+    </div>`).join('');
+  overlay.classList.add('open');
+}
+
+function selectWho(person, isSwitching=false){
+  currentUser = person;
+  try{ localStorage.setItem(WHO_SK, person); }catch(e){}
+  document.getElementById('whoOverlay').classList.remove('open');
+  updatePlayingAsBar();
+  if(isSwitching){
+    // If switching, go to that person's profile
+    showView('player', person);
+  } else {
+    // First time — go straight to their profile
+    showView('player', person);
+  }
+}
+
+function updatePlayingAsBar(){
+  const bar = document.getElementById('playingAsBar');
+  const chip = document.getElementById('playingAsChip');
+  if(!currentUser){ bar.style.display='none'; return; }
+  const idx = PEOPLE.indexOf(currentUser);
+  bar.style.display = 'flex';
+  chip.innerHTML = `<span style="font-size:1.1rem">${PERSON_ICONS[currentUser]}</span> ${currentUser}`;
+}
+
+(function initLocal(){
+  try{
+    const raw=localStorage.getItem(LOCAL_SK);
+    if(raw){
+      const parsed=JSON.parse(raw);
+      state=parsed;
+      if(!state.events)state.events=[];
+    } else {
+      state=emptyState();
+    }
+  }catch(e){state=emptyState();}
+  // Check for saved user
+  try{ currentUser = localStorage.getItem(WHO_SK) || null; }catch(e){}
+  if(currentUser && !PEOPLE.includes(currentUser)) currentUser = null;
+  dbReady=true;
+  setSyncStatus('preview');
+  if(!currentUser){
+    openWhoOverlay(false);
+  } else {
+    updatePlayingAsBar();
+    showView('player', currentUser);
+  }
+})();
+
+(async function initFirebase(){
+  try{
+    const {initializeApp} = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const {getDatabase,ref,onValue,set} = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
+    const app = initializeApp({
+      apiKey:"AIzaSyBWLduhnOMjlnN4AxLb6ItCXEOFls4j_ao",
+      authDomain:"kismet-house.firebaseapp.com",
+      databaseURL:"https://kismet-house-default-rtdb.firebaseio.com",
+      projectId:"kismet-house",
+      storageBucket:"kismet-house.firebasestorage.app",
+      messagingSenderId:"501723265281",
+      appId:"1:501723265281:web:ef13366116e4ca61eec300"
+    });
+    const db = getDatabase(app);
+    const rootRef = ref(db,'kismet');
+    firebaseSet = (s)=>set(rootRef,s);
+    onValue(rootRef,(snapshot)=>{
+      const data=snapshot.val();
+      if(data){
+        state=emptyState();
+        PEOPLE.forEach(p=>{
+          if(data.progress?.[p])state.progress[p]={...state.progress[p],...data.progress[p]};
+          if(data.fish?.[p])state.fish[p]=data.fish[p];
+        });
+        state.events=data.events||[];
+      } else {
+        state=emptyState();
+        set(rootRef,state);
+      }
+      setSyncStatus('live');
+      if(!currentUser){ openWhoOverlay(false); } else { updatePlayingAsBar(); renderMain(); }
+    },(err)=>{console.log('Firebase unavailable, using local storage');});
+  } catch(e){
+    console.log('Firebase unavailable, using local storage');
+  }
+})();
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function getP(person,bid,tkey){return(state.progress[person]?.[bid]?.[tkey])||0;}
+function setP(person,bid,tkey,val){
+  if(!state.progress[person])state.progress[person]={};
+  if(!state.progress[person][bid])state.progress[person][bid]={};
+  state.progress[person][bid][tkey]=val;
+}
+function countEarnedBadges(person){
+  let n=0;
+  BADGES.forEach(b=>{
+    if(b.id==='kismetlegend')return;
+    b.tiers.forEach(t=>{if(effectiveProgress(person,b,t)>=t.max)n++;});
+  });
+  return n;
+}
+function effectiveProgress(person,badge,tier){
+  if(tier.fishAuto)return(state.fish[person]||[]).length;
+  if(tier.legendAuto)return countEarnedBadges(person);
+  return getP(person,badge.id,tier.key);
+}
+function isComplete(person,badge,tier){return effectiveProgress(person,badge,tier)>=tier.max;}
+function getTierCounts(person){
+  let b=0,s=0,g=0;
+  BADGES.forEach(ba=>ba.tiers.forEach(t=>{
+    if(isComplete(person,ba,t)){if(t.key==='bronze')b++;else if(t.key==='silver')s++;else g++;}
+  }));
+  return{b,s,g};
+}
+
+// Get photo for a person+badge+tier from events
+function getEventPhoto(person, badgeId, tierKey){
+  if(!state.events)return null;
+  // Most recent event for this person+badge+tier that has a photo
+  const evts = state.events.filter(e=>e.person===person&&e.badgeId===badgeId&&e.tierKey===tierKey&&e.photo);
+  if(!evts.length)return null;
+  return evts[evts.length-1].photo;
+}
+
+function getPersonIdx(name){return PEOPLE.indexOf(name);}
+
+function timeAgo(ts){
+  const diff=Date.now()-ts;
+  const m=Math.floor(diff/60000);
+  if(m<1)return'just now';
+  if(m<60)return m+'m ago';
+  const h=Math.floor(m/60);
+  if(h<24)return h+'h ago';
+  const d=Math.floor(h/24);
+  return d+'d ago';
+}
+
+function makePatch(icon,color,size=44){
+  const r=size/2,inner=r-size*.13;
+  const nd=Math.floor(Math.PI*2*(r-size*.063)/(size*.09));
+  let dots='';
+  for(let i=0;i<nd;i++){const a=(i/nd)*Math.PI*2;dots+=`<circle cx="${(r+Math.cos(a)*(r-size*.063)).toFixed(1)}" cy="${(r+Math.sin(a)*(r-size*.063)).toFixed(1)}" r="${(size*.042).toFixed(1)}" fill="rgba(255,255,255,0.55)"/>`;}
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg"><circle cx="${r}" cy="${r}" r="${r-1}" fill="${color}" opacity="0.28"/><circle cx="${r}" cy="${r}" r="${inner}" fill="${color}"/><circle cx="${r}" cy="${r}" r="${inner}" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="${(size*.04).toFixed(1)}"/>${dots}<text x="${r}" y="${r}" font-size="${size*.42}" text-anchor="middle" dominant-baseline="central">${icon}</text></svg>`;
+}
+
+// ── ROUTING ───────────────────────────────────────────────────────────────────
+function showView(v,player){
+  currentView=v;selectedPlayer=player||null;
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>{b.classList.toggle('active',['home','achievements','feed','map','fishing'][i]===v);});
+  renderMain();
+}
+function renderMain(){
+  const el=document.getElementById('appMain');
+  if(currentView==='home')el.innerHTML=renderHome();
+  else if(currentView==='player')el.innerHTML=renderPlayer(selectedPlayer);
+  else if(currentView==='achievements')el.innerHTML=renderAllBadges();
+  else if(currentView==='feed')el.innerHTML=renderFeed();
+  else if(currentView==='fishing')el.innerHTML=renderFishing();
+  else if(currentView==='map'){el.innerHTML=renderMap();initMapTip();}
+}
+
+// ── HOME ──────────────────────────────────────────────────────────────────────
+function renderHome(){
+  let h=`<div class="section-title">The Family</div><div class="player-grid">`;
+  PEOPLE.forEach((p,i)=>{
+    const{b,s,g}=getTierCounts(p);const total=b+s+g;
+    let pips='';
+    for(let x=0;x<Math.min(g,5);x++)pips+=`<div class="pip" style="background:var(--gold)"></div>`;
+    for(let x=0;x<Math.min(s,5);x++)pips+=`<div class="pip" style="background:var(--silver)"></div>`;
+    for(let x=0;x<Math.min(b,5);x++)pips+=`<div class="pip" style="background:var(--bronze)"></div>`;
+    h+=`<div class="player-card" onclick="showView('player','${p}')"><div class="p-avatar" style="background:${AVATARS_BG[i]}">${PERSON_ICONS[p]}</div><div class="p-name">${p}</div><div class="p-count">${total} badge${total!==1?'s':''}</div><div class="p-pips">${pips}</div></div>`;
+  });
+  return h+`</div>`;
+}
+
+// ── PLAYER ────────────────────────────────────────────────────────────────────
+function renderPlayer(name){
+  const idx=PEOPLE.indexOf(name);
+  const{b,s,g}=getTierCounts(name);
+  let h=`<button class="back-btn" onclick="showView('home')">&#8592; Back to Family</button>
+  <div class="profile-header">
+    <div class="profile-avatar" style="background:${AVATARS_BG[idx]}">${PERSON_ICONS[name]}</div>
+    <div><div class="profile-name">${name}</div>
+    <div class="profile-stats">
+      <div class="ps"><div class="ps-num" style="color:var(--gold)">${g}</div><div class="ps-label">Gold</div></div>
+      <div class="ps"><div class="ps-num" style="color:var(--silver)">${s}</div><div class="ps-label">Silver</div></div>
+      <div class="ps"><div class="ps-num" style="color:var(--bronze)">${b}</div><div class="ps-label">Bronze</div></div>
+    </div></div>
+  </div><div class="ach-grid">`;
+  BADGES.forEach(badge=>{
+    h+=`<div class="ach-card"><div class="ach-head">${makePatch(badge.icon,badge.color,44)}<div class="ach-title">${badge.name}</div></div>`;
+    badge.tiers.forEach(tier=>{
+      const prog=effectiveProgress(name,badge,tier);
+      const max=tier.max,pct=Math.min(100,Math.round((prog/max)*100)),done=prog>=max;
+      const isBool=tier.type==='boolean'||max===1,isAuto=!!(tier.fishAuto||tier.legendAuto);
+      const photo=done?getEventPhoto(name,badge.id,tier.key):null;
+
+      let control='';
+      if(done){
+        if(isAuto)control=`<div class="check-toggle done" style="cursor:default" title="Auto-tracked">&#10003;</div>`;
+        else if(isBool)control=`<div class="check-toggle done" title="Click to undo" onclick="toggleBool('${name}','${badge.id}','${tier.key}')">&#10003;</div>`;
+        else control=`<div class="stepper"><button class="step-btn" onclick="adjustProg('${name}','${badge.id}','${tier.key}',-1,${max})">&#8722;</button><div class="check-toggle done" style="cursor:default">&#10003;</div></div>`;
+      } else {
+        if(isAuto)control=`<span style="font-size:10px;color:var(--muted);flex-shrink:0;text-align:center;line-height:1.3">auto<br>tracked</span>`;
+        else if(isBool)control=`<div class="check-toggle" title="Mark as done" onclick="toggleBool('${name}','${badge.id}','${tier.key}')"></div>`;
+        else control=`<div class="stepper"><button class="step-btn" onclick="adjustProg('${name}','${badge.id}','${tier.key}',-1,${max})">&#8722;</button><button class="step-btn" onclick="adjustProg('${name}','${badge.id}','${tier.key}',1,${max})">+</button></div>`;
+      }
+
+      // Photo thumbnail or camera button for completed tiers
+      let photoEl='';
+      if(done && !isAuto){
+        if(photo){
+          const cap=`${name} — ${badge.name} ${tier.label}`;
+          const escapedCap=cap.replace(/'/g,"\\'");
+          const escapedPhoto=photo.substring(0,50); // just for onclick check
+          photoEl=`<img class="tier-photo-thumb" src="${photo}" alt="Achievement photo" onclick="openLightbox('${photo.replace(/'/g,"\\'")}','${escapedCap}')"/>`;
+        } else {
+          photoEl=`<div class="tier-cam-placeholder" title="Add a photo" onclick="openPhotoPromptForExisting('${name}','${badge.id}','${tier.key}','${badge.name}','${tier.desc.replace(/'/g,"\\'")}','${badge.icon}')">📷</div>`;
+        }
+      }
+
+      h+=`<div class="tier-row"><span class="tier-label tl-${tier.key}">${tier.label}</span>
+        <div class="tier-progress-wrap"><div class="tier-desc">${tier.desc}</div>
+        ${!isBool||isAuto?`<div class="prog-bar-outer"><div class="prog-bar-fill" style="width:${pct}%;background:${TIER_COLORS[tier.key]}"></div></div><div class="prog-label">${prog}/${max}${tier.unit?' '+tier.unit:''}</div>`:''}
+        </div>${photoEl}${control}</div>`;
+    });
+    h+=`</div>`;
+  });
+  return h+`</div>`;
+}
+
+function removeEvents(person,bid,tkey){
+  if(!state.events)return;
+  state.events=state.events.filter(e=>!(e.person===person&&e.badgeId===bid&&e.tierKey===tkey));
+}
+
+function toggleBool(person,bid,tkey){
+  const wasComplete=getP(person,bid,tkey)>=1;
+  setP(person,bid,tkey,wasComplete?0:1);
+  if(!wasComplete){
+    // Just completed — show photo prompt
+    const badge=BADGES.find(b=>b.id===bid);
+    const tier=badge.tiers.find(t=>t.key===tkey);
+    saveState();
+    openPhotoPrompt(person,bid,tkey,badge.name,tier.desc,badge.icon);
+  } else {
+    // Unchecked — remove from feed
+    removeEvents(person,bid,tkey);
+    saveState();renderMain();
+  }
+}
+
+function adjustProg(person,bid,tkey,delta,max){
+  const prev=getP(person,bid,tkey);
+  const next=Math.max(0,Math.min(max,prev+delta));
+  setP(person,bid,tkey,next);
+  if(next>=max && prev<max){
+    // Just hit completion
+    const badge=BADGES.find(b=>b.id===bid);
+    const tier=badge.tiers.find(t=>t.key===tkey);
+    saveState();
+    openPhotoPrompt(person,bid,tkey,badge.name,tier.desc,badge.icon);
+  } else {
+    // If dropping below completion, remove feed entry
+    if(prev>=max && next<max) removeEvents(person,bid,tkey);
+    saveState();renderMain();
+  }
+}
+
+// ── PHOTO PROMPT ──────────────────────────────────────────────────────────────
+function openPhotoPrompt(person,badgeId,tierKey,badgeName,tierDesc,badgeIcon){
+  pendingPhotoContext={person,badgeId,tierKey,badgeName,tierDesc,badgeIcon};
+  pendingPhotoBase64=null;
+  document.getElementById('photoModalEmoji').textContent='🎉';
+  document.getElementById('photoModalTitle').textContent=`${badgeName} — ${tierKey.charAt(0).toUpperCase()+tierKey.slice(1)} earned!`;
+  document.getElementById('photoModalSub').textContent=tierDesc;
+  document.getElementById('photoPreview').style.display='none';
+  document.getElementById('photoPreview').src='';
+  document.getElementById('photoFileInput').value='';
+  document.getElementById('photoSaveBtn').textContent='Save with Photo';
+  document.getElementById('photoModal').classList.add('open');
+}
+
+function openPhotoPromptForExisting(person,badgeId,tierKey,badgeName,tierDesc,badgeIcon){
+  // For adding photo to already-completed tier
+  pendingPhotoContext={person,badgeId,tierKey,badgeName,tierDesc,badgeIcon,existingOnly:true};
+  pendingPhotoBase64=null;
+  document.getElementById('photoModalEmoji').textContent='📷';
+  document.getElementById('photoModalTitle').textContent=`Add a photo`;
+  document.getElementById('photoModalSub').textContent=`${badgeName} — ${tierKey.charAt(0).toUpperCase()+tierKey.slice(1)}: ${tierDesc}`;
+  document.getElementById('photoPreview').style.display='none';
+  document.getElementById('photoPreview').src='';
+  document.getElementById('photoFileInput').value='';
+  document.getElementById('photoSaveBtn').textContent='Save Photo';
+  document.getElementById('photoModal').classList.add('open');
+}
+
+function handlePhotoSelect(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    pendingPhotoBase64=e.target.result;
+    const preview=document.getElementById('photoPreview');
+    preview.src=pendingPhotoBase64;
+    preview.style.display='block';
+    document.getElementById('photoSaveBtn').textContent=pendingPhotoContext?.existingOnly?'Save Photo':'Save with Photo ✓';
+  };
+  reader.readAsDataURL(file);
+}
+
+function addEvent(person,badgeId,tierKey,badgeName,tierDesc,photo){
+  if(!state.events)state.events=[];
+  state.events.push({
+    person,badgeId,tierKey,badgeName,tierDesc,
+    timestamp:Date.now(),
+    photo:photo||null
+  });
+}
+
+function saveWithPhoto(){
+  if(!pendingPhotoContext)return;
+  const{person,badgeId,tierKey,badgeName,tierDesc}=pendingPhotoContext;
+  addEvent(person,badgeId,tierKey,badgeName,tierDesc,pendingPhotoBase64||null);
+  saveState();
+  closeModal('photoModal');
+  renderMain();
+}
+
+function saveWithoutPhoto(){
+  if(!pendingPhotoContext)return;
+  const{person,badgeId,tierKey,badgeName,tierDesc,existingOnly}=pendingPhotoContext;
+  if(!existingOnly){
+    // Still log the event, just without photo
+    addEvent(person,badgeId,tierKey,badgeName,tierDesc,null);
+    saveState();
+  }
+  closeModal('photoModal');
+  renderMain();
+}
+
+function cancelPhotoPrompt(){
+  if(!pendingPhotoContext)return;
+  const{person,badgeId,tierKey,existingOnly}=pendingPhotoContext;
+  if(!existingOnly){
+    // Undo the completion — reverse what toggleBool/adjustProg did
+    setP(person,badgeId,tierKey,0);
+    saveState();
+  }
+  pendingPhotoContext=null;
+  pendingPhotoBase64=null;
+  closeModal('photoModal');
+  renderMain();
+}
+
+// ── LIGHTBOX ──────────────────────────────────────────────────────────────────
+function openLightbox(src,caption){
+  document.getElementById('lightboxImg').src=src;
+  document.getElementById('lightboxCaption').textContent=caption||'';
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
+
+// ── FEED ──────────────────────────────────────────────────────────────────────
+function renderFeed(){
+  const events=(state.events||[]).slice().reverse();
+  let h=`<div class="section-title">&#128247; Family Feed</div>`;
+  if(!events.length){
+    return h+`<div class="feed-empty">No achievements logged yet.<br>Complete a badge to see it here! 🏅</div>`;
+  }
+  events.forEach(ev=>{
+    const idx=getPersonIdx(ev.person);
+    const bg=idx>=0?AVATARS_BG[idx]:'#888';
+    const icon=PERSON_ICONS[ev.person]||'🏅';
+    const tierMoji=TIER_EMOJI[ev.tierKey]||'🏅';
+    const tierClass=`feed-tier-${ev.tierKey}`;
+    const age=timeAgo(ev.timestamp);
+    const photoId=`feedphoto_${ev.timestamp}`;
+    h+=`<div class="feed-card">
+      <div class="feed-header">
+        <div class="feed-avatar" style="background:${bg}">${icon}</div>
+        <div class="feed-meta">
+          <div class="feed-who">${ev.person} <span class="feed-tier-badge ${tierClass}">${tierMoji} ${ev.tierKey.charAt(0).toUpperCase()+ev.tierKey.slice(1)}</span></div>
+          <div class="feed-what">earned <strong>${ev.badgeName}</strong>${ev.tierDesc?` · <em style="font-weight:600;color:var(--muted)">${ev.tierDesc}</em>`:''}</div>
+        </div>
+        <div class="feed-time">${age}</div>
+      </div>
+      ${ev.photo?`<img class="feed-photo" src="${ev.photo}" alt="Achievement photo" onclick="openLightbox('${ev.photo.replace(/'/g,"\\'")}','${(ev.person+' — '+ev.badgeName).replace(/'/g,"\\'")}')"/>`:''}
+    </div>`;
+  });
+  return h;
+}
+
+// ── LEADERBOARD ───────────────────────────────────────────────────────────────
+function renderLeaderboard(){
+  const ranked=PEOPLE.map((p,i)=>{const{b,s,g}=getTierCounts(p);return{name:p,idx:i,b,s,g,score:g*3+s*2+b};}).sort((a,c)=>c.score-a.score);
+  let h=`<div class="section-title">Leaderboard</div><div class="leaderboard">`;
+  ranked.forEach((p,rank)=>{
+    const rc=rank===0?'r1':rank===1?'r2':rank===2?'r3':'';
+    const medal=rank===0?'&#129351;':rank===1?'&#129352;':rank===2?'&#129353;':`${rank+1}`;
+    h+=`<div class="lb-row" onclick="showView('player','${p.name}')"><div class="lb-rank ${rc}">${medal}</div><div class="lb-av" style="background:${AVATARS_BG[p.idx]}">${PERSON_ICONS[p.name]}</div><div class="lb-name">${p.name}</div><div class="lb-right">${p.g?`<span style="color:var(--gold);font-weight:800">&#127941; ${p.g}</span>`:''} ${p.s?`<span style="color:var(--silver);font-weight:800">&#129352; ${p.s}</span>`:''} ${p.b?`<span style="color:var(--bronze);font-weight:800">&#129353; ${p.b}</span>`:''} ${!p.score?`<span style="font-size:11px">No badges yet</span>`:''}</div></div>`;
+  });
+  return h+`</div>`;
+}
+
+// ── ALL BADGES ────────────────────────────────────────────────────────────────
+function renderAllBadges(){
+  let h=`<div class="section-title">All Badges</div><div class="ach-grid">`;
+  BADGES.forEach(badge=>{
+    h+=`<div class="ach-card"><div class="ach-head">${makePatch(badge.icon,badge.color,44)}<div class="ach-title">${badge.name}</div></div>`;
+    badge.tiers.forEach(tier=>{
+      h+=`<div class="tier-row"><span class="tier-label tl-${tier.key}">${tier.label}</span><div class="tier-progress-wrap"><div class="tier-desc">${tier.desc}</div></div></div>`;
+    });
+    h+=`</div>`;
+  });
+  return h+`</div>`;
+}
+
+// ── FISHING ───────────────────────────────────────────────────────────────────
+const FISH_DATA = {
+  "Striped Bass":{svg:`<svg viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="38" cy="22" rx="28" ry="13" fill="#7A9AB0" stroke="#4A6A80" stroke-width="1.5"/><polygon points="66,22 78,12 78,32" fill="#7A9AB0" stroke="#4A6A80" stroke-width="1.5"/><path d="M20,14 Q30,8 45,12" fill="none" stroke="#4A6A80" stroke-width="1" opacity="0.6"/><path d="M18,19 Q28,13 46,17" fill="none" stroke="#4A6A80" stroke-width="1" opacity="0.6"/><path d="M18,25 Q28,19 46,23" fill="none" stroke="#4A6A80" stroke-width="1" opacity="0.6"/><path d="M20,30 Q30,24 45,28" fill="none" stroke="#4A6A80" stroke-width="1" opacity="0.6"/><circle cx="16" cy="19" r="3" fill="white" stroke="#4A6A80" stroke-width="1"/><circle cx="16.5" cy="19" r="1.5" fill="#222"/><path d="M28,10 Q32,4 36,10" fill="#5A7A90" stroke="#4A6A80" stroke-width="1"/></svg>`,habitat:"Ocean & Bay",length:'18–36"',rarity:"Common",fun:"The king of Fire Island fishing — fights hard and tastes even better.",season:"May–Nov",difficulty:"⭐⭐⭐"},
+  "Black Sea Bass":{svg:`<svg viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="36" cy="22" rx="24" ry="14" fill="#3A3A4A" stroke="#222232" stroke-width="1.5"/><polygon points="60,22 74,13 74,31" fill="#3A3A4A" stroke="#222232" stroke-width="1.5"/><circle cx="16" cy="19" r="3.5" fill="white" stroke="#222" stroke-width="1"/><circle cx="16.5" cy="19" r="1.8" fill="#111"/><path d="M24,10 Q30,3 38,9" fill="#2A2A3A" stroke="#222" stroke-width="1.2"/><path d="M24,10 L38,9 L36,16 Z" fill="#2A2A3A" stroke="#222" stroke-width="1"/><line x1="25" y1="22" x2="55" y2="22" stroke="#555" stroke-width="0.8" opacity="0.5"/></svg>`,habitat:"Rocky ocean bottom",length:'10–20"',rarity:"Common",fun:"Loves hanging around structure — try near the jetties!",season:"Jun–Oct",difficulty:"⭐⭐"},
+  "Fluke":{svg:`<svg viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="38" cy="24" rx="30" ry="10" fill="#C8B870" stroke="#9A8840" stroke-width="1.5" transform="rotate(-8,38,24)"/><polygon points="68,18 80,8 80,28" fill="#C8B870" stroke="#9A8840" stroke-width="1.5"/><circle cx="14" cy="18" r="3" fill="white" stroke="#9A8840" stroke-width="1"/><circle cx="14.5" cy="18" r="1.5" fill="#333"/><circle cx="22" cy="16" r="2" fill="#9A8840" opacity="0.4"/><circle cx="32" cy="14" r="1.5" fill="#9A8840" opacity="0.4"/><circle cx="28" cy="22" r="2" fill="#9A8840" opacity="0.4"/><circle cx="42" cy="20" r="1.8" fill="#9A8840" opacity="0.4"/></svg>`,habitat:"Sandy ocean bottom",length:'12–28"',rarity:"Common",fun:"Both eyes on the same side of its head — it lies flat on the seafloor waiting for prey.",season:"May–Sep",difficulty:"⭐⭐"},
+  "Bluefish":{svg:`<svg viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="37" cy="22" rx="26" ry="11" fill="#4A7A8A" stroke="#2A5A6A" stroke-width="1.5"/><polygon points="63,22 77,13 77,31" fill="#4A7A8A" stroke="#2A5A6A" stroke-width="1.5"/><circle cx="14" cy="19" r="3" fill="white" stroke="#2A5A6A" stroke-width="1"/><circle cx="14.5" cy="19" r="1.5" fill="#111"/><path d="M14,22 Q16,24 18,22" fill="none" stroke="#2A5A6A" stroke-width="1.5" stroke-linecap="round"/><path d="M28,11 Q33,5 40,11" fill="#3A6A7A" stroke="#2A5A6A" stroke-width="1"/><path d="M42,30 Q46,36 50,30" fill="#3A6A7A" stroke="#2A5A6A" stroke-width="1"/></svg>`,habitat:"Open ocean & surf",length:'12–30"',rarity:"Common",fun:"Known for their razor-sharp teeth — handle with care!",season:"May–Oct",difficulty:"⭐"},
+  "Bluefish Snapper":{svg:`<svg viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="36" cy="22" rx="20" ry="9" fill="#5A8A9A" stroke="#3A6A7A" stroke-width="1.5"/><polygon points="56,22 68,15 68,29" fill="#5A8A9A" stroke="#3A6A7A" stroke-width="1.5"/><circle cx="18" cy="20" r="2.5" fill="white" stroke="#3A6A7A" stroke-width="1"/><circle cx="18.5" cy="20" r="1.2" fill="#111"/><path d="M26,13 Q30,8 36,13" fill="#4A7A8A" stroke="#3A6A7A" stroke-width="1"/></svg>`,habitat:"Shallow bays & surf",length:'4–8"',rarity:"Very Common",fun:"Baby bluefish! They swarm the bay in late summer in huge schools.",season:"Jul–Sep",difficulty:"⭐"},
+  "Porgy":{svg:`<svg viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="36" cy="22" rx="22" ry="14" fill="#C0A888" stroke="#907858" stroke-width="1.5"/><polygon points="58,22 70,15 70,29" fill="#C0A888" stroke="#907858" stroke-width="1.5"/><circle cx="16" cy="19" r="3.5" fill="white" stroke="#907858" stroke-width="1"/><circle cx="16.5" cy="19" r="1.8" fill="#222"/><path d="M22,10 Q28,5 34,10 L34,13 Q28,9 22,13 Z" fill="#A09070" stroke="#907858" stroke-width="1"/></svg>`,habitat:"Rocky & sandy bottom",length:'8–16"',rarity:"Common",fun:"Scup by another name — great pan fish, delicious when fresh.",season:"May–Oct",difficulty:"⭐"},
+  "Weakfish":{svg:`<svg viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="38" cy="22" rx="27" ry="11" fill="#8AB0A0" stroke="#5A8070" stroke-width="1.5"/><polygon points="65,22 78,13 78,31" fill="#8AB0A0" stroke="#5A8070" stroke-width="1.5"/><circle cx="14" cy="19" r="3" fill="white" stroke="#5A8070" stroke-width="1"/><circle cx="14.5" cy="19" r="1.5" fill="#222"/><path d="M22,12 Q32,6 44,12" fill="#7AA090" stroke="#5A8070" stroke-width="1"/></svg>`,habitat:"Bay & estuaries",length:'12–24"',rarity:"Uncommon",fun:"Named for their delicate mouths — hooks tear out easily, making them a real challenge to land.",season:"May–Oct",difficulty:"⭐⭐⭐"},
+  "Pufferfish":{svg:`<svg viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="36" cy="22" rx="20" ry="16" fill="#D4B870" stroke="#A48840" stroke-width="1.5"/><ellipse cx="56" cy="22" rx="8" ry="5" fill="#C4A860" stroke="#A48840" stroke-width="1"/><circle cx="18" cy="18" r="4" fill="white" stroke="#A48840" stroke-width="1"/><circle cx="18.5" cy="17.5" r="2" fill="#222"/></svg>`,habitat:"Bay & nearshore",length:'5–14"',rarity:"Common",fun:"Inflates like a balloon when threatened!",season:"Jun–Oct",difficulty:"⭐"},
+  "Kingfish":{svg:`<svg viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="37" cy="22" rx="25" ry="10" fill="#9A8878" stroke="#6A5848" stroke-width="1.5"/><polygon points="62,22 76,14 76,30" fill="#9A8878" stroke="#6A5848" stroke-width="1.5"/><circle cx="14" cy="20" r="3" fill="white" stroke="#6A5848" stroke-width="1"/><circle cx="14.5" cy="20" r="1.5" fill="#222"/><path d="M22,13 Q28,7 36,13" fill="#8A7868" stroke="#6A5848" stroke-width="1"/></svg>`,habitat:"Surf & nearshore",length:'8–18"',rarity:"Uncommon",fun:"Loves to feed in the surf zone — cast near breaking waves for best results.",season:"May–Oct",difficulty:"⭐⭐"},
+  "Sea Robin":{svg:`<svg viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="36" cy="22" rx="22" ry="10" fill="#C87040" stroke="#904A20" stroke-width="1.5"/><polygon points="58,22 70,16 70,28" fill="#C87040" stroke="#904A20" stroke-width="1.5"/><path d="M14,12 Q22,4 32,12" fill="#B86030" stroke="#904A20" stroke-width="1.5"/><path d="M14,32 Q22,40 32,32" fill="#B86030" stroke="#904A20" stroke-width="1.5"/><circle cx="16" cy="19" r="3" fill="white" stroke="#904A20" stroke-width="1"/><circle cx="16.5" cy="19" r="1.5" fill="#222"/></svg>`,habitat:"Sandy ocean bottom",length:'10–18"',rarity:"Very Common",fun:"Walks along the seafloor using modified fin rays like legs!",season:"May–Oct",difficulty:"⭐"},
+  "Skate":{svg:`<svg viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg"><path d="M40,4 Q70,22 40,40 Q10,22 40,4 Z" fill="#8A7868" stroke="#5A4838" stroke-width="1.5"/><line x1="40" y1="30" x2="72" y2="38" stroke="#5A4838" stroke-width="2" stroke-linecap="round"/><circle cx="30" cy="18" r="2" fill="#5A4838" opacity="0.6"/><circle cx="50" cy="18" r="2" fill="#5A4838" opacity="0.6"/></svg>`,habitat:"Sandy ocean bottom",length:'18–36"',rarity:"Common",fun:"A flat ray that buries itself in the sand — related to sharks!",season:"Year-round",difficulty:"⭐"},
+  "Dogfish Shark":{svg:`<svg viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="36" cy="22" rx="28" ry="10" fill="#7A8A8A" stroke="#4A5A5A" stroke-width="1.5"/><polygon points="64,22 78,15 78,29" fill="#7A8A8A" stroke="#4A5A5A" stroke-width="1.5"/><polygon points="64,22 72,10 76,22" fill="#6A7A7A" stroke="#4A5A5A" stroke-width="1"/><polygon points="28,12 34,4 40,12" fill="#6A7A7A" stroke="#4A5A5A" stroke-width="1"/><circle cx="12" cy="20" r="2.5" fill="#4A5A5A"/></svg>`,habitat:"Open ocean",length:'24–48"',rarity:"Uncommon",fun:"A small shark that often shows up uninvited!",season:"Apr–Nov",difficulty:"⭐⭐"}
+};
+
+function renderFishing(){
+  const totalFish=FISH_LIST.length;
+  const totalCatchers=PEOPLE.map(p=>({name:p,count:(state.fish[p]||[]).length})).filter(p=>p.count>0);
+  let h=`<div class="section-title">Kismet Fishing Registry</div>`;
+  const totalCaught=FISH_LIST.filter(f=>PEOPLE.some(p=>(state.fish[p]||[]).includes(f))).length;
+  h+=`<div style="background:var(--cream);border-radius:var(--radius);border:3px solid var(--sand-mid);box-shadow:3px 3px 0 var(--sand-dark);padding:1rem 1.25rem;margin-bottom:1rem;display:flex;gap:1.5rem;flex-wrap:wrap;align-items:center;">
+    <div style="font-family:'Lilita One',cursive;font-size:1rem;color:var(--ocean-dark);">&#127907; Registry Progress</div>
+    <div style="flex:1;min-width:200px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:4px;"><span>Species caught by family</span><span>${totalCaught}/${totalFish}</span></div>
+      <div style="height:8px;border-radius:99px;background:var(--sand-mid);overflow:hidden;"><div style="height:100%;border-radius:99px;background:var(--ocean);width:${Math.round(totalCaught/totalFish*100)}%;transition:width .4s;"></div></div>
+    </div>
+    ${totalCatchers.map(p=>`<span style="font-size:11px;background:#D4EEF7;color:var(--ocean-dark);padding:3px 10px;border-radius:99px;font-weight:700;">${p.name.split(' ')[0]} ${p.count}&#127907;</span>`).join('')}
+  </div>`;
+  h+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;">`;
+  FISH_LIST.forEach(fish=>{
+    const catchers=PEOPLE.filter(p=>(state.fish[p]||[]).includes(fish));
+    const fe=fish.replace(/'/g,"\\'");
+    const data=FISH_DATA[fish]||{};
+    const caught=catchers.length>0;
+    const tooltipId=`ft_${fish.replace(/\s+/g,'_')}`;
+    h+=`<div class="fish-card-wrap" style="position:relative;">
+      <div class="fish-card-tooltip" id="${tooltipId}">
+        <div style="font-weight:800;font-size:12px;color:var(--sand-mid);margin-bottom:4px;">${fish}</div>
+        <div style="margin-bottom:3px;">&#127968; ${data.habitat||''}</div>
+        <div style="margin-bottom:3px;">&#128207; Avg length: ${data.length||''}</div>
+        <div style="margin-bottom:3px;">&#128197; Season: ${data.season||''}</div>
+        <div style="margin-bottom:5px;">${data.difficulty||''} ${data.rarity||''}</div>
+        <div style="border-top:1px solid rgba(255,255,255,0.2);padding-top:5px;font-style:italic;color:#ccc;">${data.fun||''}</div>
+      </div>
+      <div style="background:var(--cream);border-radius:var(--radius);border:3px solid ${caught?'var(--ocean)':'var(--sand-mid)'};box-shadow:3px 3px 0 ${caught?'var(--ocean)':'var(--sand-dark)'};padding:.9rem 1rem;${caught?'background:#EAF6FF;':''}"
+        onmouseenter="showFishTip('${tooltipId}',event)" onmouseleave="hideFishTip('${tooltipId}')" onmousemove="moveFishTip('${tooltipId}',event)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="width:80px;height:44px;flex-shrink:0;filter:${caught?'none':'grayscale(0.4) opacity(0.7)'}">
+            ${data.svg||''}
+          </div>
+          <div style="flex:1;">
+            <div style="font-family:'Lilita One',cursive;font-size:1rem;color:var(--ocean-dark);">${fish}</div>
+            <div style="font-size:10px;font-weight:800;color:var(--muted);margin-top:1px;">${data.habitat||''} · ${data.length||''}</div>
+          </div>
+          ${caught?`<div style="font-size:18px;" title="Caught!">&#9989;</div>`:`<div style="width:22px;height:22px;border-radius:50%;border:2px dashed var(--sand-dark);opacity:0.4;"></div>`}
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+          <div style="display:flex;flex-wrap:wrap;gap:3px;">
+            ${catchers.length
+              ?catchers.map(c=>`<span class="catcher-tag">${c}<span class="tag-x" onclick="undoFish('${fe}','${c.replace(/'/g,"\\'")}')">&#10005;</span></span>`).join('')
+              :`<span style="font-size:11px;color:var(--muted);font-style:italic;">Not caught yet</span>`
+            }
+          </div>
+          <button class="fish-btn" onclick="openFishModal('${fe}')">+ Log catch</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  return h+`</div>`;
+}
+function showFishTip(id,e){const t=document.getElementById(id);if(!t)return;t.classList.add('on');moveFishTip(id,e);}
+function hideFishTip(id){const t=document.getElementById(id);if(t)t.classList.remove('on');}
+function moveFishTip(id,e){const t=document.getElementById(id);if(!t)return;const wrap=t.closest('.fish-card-wrap');const r=wrap.getBoundingClientRect();let x=e.clientX-r.left+12,y=e.clientY-r.top-20;if(x+230>r.width)x=e.clientX-r.left-240;if(y<0)y=10;t.style.left=x+'px';t.style.top=y+'px';}
+function undoFish(fish,person){
+  if(!state.fish[person])return;
+  state.fish[person]=state.fish[person].filter(f=>f!==fish);
+  if(state.fish[person].length===0)setP(person,'fishing','bronze',0);
+  saveState();renderMain();
+}
+
+// ── MAP ───────────────────────────────────────────────────────────────────────
+function landmarkGlowColor(badgeIds){
+  let bestScore=0,bestColor=null;
+  PEOPLE.forEach(p=>{badgeIds.forEach(bid=>{
+    const badge=BADGES.find(b=>b.id===bid);if(!badge)return;
+    badge.tiers.forEach(t=>{
+      if(isComplete(p,badge,t)){
+        const sc=t.key==='gold'?3:t.key==='silver'?2:1;
+        if(sc>bestScore){bestScore=sc;bestColor=TIER_COLORS[t.key];}
+      }
+    });
+  });});
+  return{color:bestColor,score:bestScore};
+}
+function landmarkPopupHTML(lm){
+  let html=`<div class="map-tip-title">${lm.label}</div>`;
+  lm.badges.forEach(bid=>{
+    const badge=BADGES.find(b=>b.id===bid);if(!badge)return;
+    html+=`<div style="margin-top:5px;border-top:1px solid rgba(255,255,255,0.15);padding-top:4px;"><div style="font-size:10px;color:#aaa;margin-bottom:3px;">${badge.name}</div>`;
+    const anyEarned=PEOPLE.some(p=>badge.tiers.some(t=>isComplete(p,badge,t)));
+    PEOPLE.forEach(p=>{
+      const earnedHere=badge.tiers.filter(t=>isComplete(p,badge,t));
+      if(!earnedHere.length)return;
+      const bestTier=earnedHere[earnedHere.length-1];
+      html+=`<div class="map-tip-row"><span>${PERSON_ICONS[p]} ${p.split(' ')[0]}</span><span style="color:${TIER_COLORS[bestTier.key]};font-weight:800;font-size:11px;">${bestTier.key}</span></div>`;
+    });
+    if(!anyEarned)html+=`<div style="font-size:10px;color:#888;font-style:italic;">No one yet</div>`;
+    html+=`</div>`;
+  });
+  return html;
+}
+function glowRing(lm,r=18){
+  const g=landmarkGlowColor(lm.badges);
+  if(!g.color)return'';
+  return`<circle cx="${lm.cx}" cy="${lm.cy}" r="${r+5}" fill="${g.color}" opacity="0.25"/><circle cx="${lm.cx}" cy="${lm.cy}" r="${r+2}" fill="none" stroke="${g.color}" stroke-width="2.5"/>`;
+}
+function renderMap(){
+  const ml=MAP_LANDMARKS;
+  return`<div class="section-title">Kismet Map</div>
+  <div class="map-outer" id="mapOuter" style="overflow-y:auto;">
+  <div class="map-tip" id="mapTip"><div class="map-tip-box" id="mapTipBox"></div></div>
+  <svg viewBox="0 0 700 830" role="img" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+  <title>Kismet, Fire Island map</title>
+  <rect x="0" y="0" width="700" height="960" fill="#D4C88A"/>
+  <path d="M0,0 L700,0 L700,130 Q620,110 550,100 Q490,92 440,96 Q390,100 350,94 Q300,86 250,80 Q200,74 160,80 Q110,88 60,82 Q30,78 0,80 Z" fill="#6BAFD4"/>
+  <text x="200" y="48" font-family="'Lilita One',serif" font-size="16" fill="#1A5A7A" text-anchor="middle" letter-spacing="2" opacity="0.85">GREAT SOUTH BAY</text>
+  <path d="M20,96 Q120,86 220,92 Q320,98 420,88 Q520,78 640,92" fill="none" stroke="#4A9AB8" stroke-width="1.2" opacity="0.5"/>
+  <path d="M0,80 Q60,82 110,88 Q160,80 210,74 Q260,80 310,86 Q350,94 400,100 Q440,96 490,92 Q550,100 620,110 Q660,118 700,130 L700,150 Q660,142 610,134 Q550,124 490,116 Q440,120 400,124 Q360,128 310,110 Q260,104 210,98 Q160,104 110,108 Q60,100 0,96 Z" fill="#E0C870"/>
+  <rect x="210" y="72" width="7" height="52" rx="2" fill="#9A7A40"/>
+  <rect x="224" y="66" width="7" height="58" rx="2" fill="#9A7A40"/>
+  <rect x="206" y="70" width="30" height="5" rx="1" fill="#7A5A28"/>
+  <text x="218" y="60" font-family="'Nunito',sans-serif" font-size="8" fill="#1A5A7A" text-anchor="middle" font-weight="800">Ferry</text>
+  <rect x="326" y="86" width="54" height="104" rx="2" fill="#4A8EC0"/>
+  <rect x="322" y="82" width="5" height="108" fill="#8A6830"/>
+  <rect x="380" y="82" width="5" height="108" fill="#8A6830"/>
+  <rect x="322" y="82" width="63" height="6" rx="1" fill="#8A6830"/>
+  <rect x="328" y="92" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.85"/><rect x="328" y="101" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.85"/>
+  <rect x="328" y="110" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.85"/><rect x="328" y="119" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.85"/>
+  <rect x="328" y="128" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.85"/><rect x="328" y="137" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.85"/>
+  <rect x="348" y="88" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.85"/><rect x="348" y="97" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.85"/>
+  <rect x="348" y="106" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.85"/><rect x="348" y="115" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.85"/>
+  <rect x="348" y="124" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.85"/><rect x="348" y="133" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.85"/>
+  <text x="352" y="78" font-family="'Nunito',sans-serif" font-size="7" fill="#1A5A7A" text-anchor="middle" font-weight="800">marina</text>
+  <rect x="482" y="92" width="36" height="72" rx="2" fill="#4A8EC0"/>
+  <rect x="478" y="88" width="5" height="76" fill="#8A6830"/>
+  <rect x="518" y="88" width="5" height="76" fill="#8A6830"/>
+  <rect x="478" y="88" width="45" height="5" rx="1" fill="#8A6830"/>
+  <rect x="484" y="96" width="12" height="4" rx="1" fill="#E8E8D8" opacity="0.85"/><rect x="500" y="96" width="12" height="4" rx="1" fill="#E8E8D8" opacity="0.85"/>
+  <rect x="484" y="104" width="12" height="4" rx="1" fill="#E8E8D8" opacity="0.85"/><rect x="500" y="104" width="12" height="4" rx="1" fill="#E8E8D8" opacity="0.85"/>
+  <rect x="484" y="112" width="12" height="4" rx="1" fill="#E8E8D8" opacity="0.85"/><rect x="500" y="112" width="12" height="4" rx="1" fill="#E8E8D8" opacity="0.85"/>
+  <rect x="484" y="120" width="12" height="4" rx="1" fill="#E8E8D8" opacity="0.85"/><rect x="500" y="120" width="12" height="4" rx="1" fill="#E8E8D8" opacity="0.85"/>
+  <text x="500" y="84" font-family="'Nunito',sans-serif" font-size="7" fill="#1A5A7A" text-anchor="middle" font-weight="800">dock</text>
+  <rect x="0" y="80" width="178" height="780" fill="#8BA86A"/>
+  <rect x="148" y="150" width="30" height="710" fill="#D4C88A"/>
+  <circle cx="50" cy="180" r="32" fill="#7A9A5A"/><circle cx="110" cy="250" r="26" fill="#6A8A4A"/>
+  <circle cx="38" cy="330" r="28" fill="#7A9A5A"/><circle cx="120" cy="410" r="22" fill="#6A8A4A"/>
+  <circle cx="55" cy="490" r="26" fill="#7A9A5A"/><circle cx="105" cy="570" r="20" fill="#6A8A4A"/>
+  <circle cx="42" cy="650" r="24" fill="#7A9A5A"/><circle cx="115" cy="720" r="18" fill="#6A8A4A"/>
+  <rect x="548" y="150" width="152" height="710" fill="#8BA86A"/>
+  <rect x="548" y="150" width="30" height="710" fill="#D4C88A"/>
+  <circle cx="590" cy="220" r="22" fill="#7A9A5A"/><circle cx="638" cy="310" r="20" fill="#6A8A4A"/>
+  <circle cx="582" cy="400" r="22" fill="#7A9A5A"/><circle cx="634" cy="490" r="18" fill="#6A8A4A"/>
+  <circle cx="588" cy="580" r="20" fill="#7A9A5A"/><circle cx="636" cy="660" r="18" fill="#6A8A4A"/>
+  <circle cx="590" cy="740" r="20" fill="#7A9A5A"/>
+  <rect x="396" y="150" width="110" height="710" fill="#8BA86A"/>
+  <rect x="396" y="150" width="20" height="710" fill="#D4C88A"/>
+  <rect x="480" y="150" width="26" height="710" fill="#D4C88A"/>
+  <circle cx="436" cy="185" r="13" fill="#7A9A5A"/><circle cx="460" cy="200" r="11" fill="#6A8A4A"/>
+  <circle cx="438" cy="228" r="12" fill="#7A9A5A"/><circle cx="458" cy="252" r="11" fill="#6A8A4A"/>
+  <circle cx="436" cy="278" r="13" fill="#7A9A5A"/><circle cx="460" cy="302" r="11" fill="#6A8A4A"/>
+  <circle cx="438" cy="328" r="12" fill="#7A9A5A"/><circle cx="458" cy="354" r="11" fill="#6A8A4A"/>
+  <circle cx="436" cy="380" r="13" fill="#7A9A5A"/><circle cx="460" cy="406" r="11" fill="#6A8A4A"/>
+  <circle cx="438" cy="432" r="12" fill="#7A9A5A"/><circle cx="458" cy="458" r="11" fill="#6A8A4A"/>
+  <circle cx="436" cy="484" r="13" fill="#7A9A5A"/><circle cx="460" cy="510" r="11" fill="#6A8A4A"/>
+  <circle cx="438" cy="536" r="12" fill="#7A9A5A"/><circle cx="458" cy="562" r="11" fill="#6A8A4A"/>
+  <circle cx="436" cy="588" r="13" fill="#7A9A5A"/><circle cx="460" cy="614" r="11" fill="#6A8A4A"/>
+  <circle cx="438" cy="640" r="12" fill="#7A9A5A"/><circle cx="458" cy="666" r="11" fill="#6A8A4A"/>
+  <circle cx="436" cy="692" r="13" fill="#7A9A5A"/><circle cx="460" cy="718" r="11" fill="#6A8A4A"/>
+  <circle cx="438" cy="744" r="12" fill="#7A9A5A"/>
+  <rect x="178" y="150" width="8" height="710" fill="#C8B468"/>
+  <rect x="248" y="150" width="8" height="710" fill="#C8B468"/>
+  <rect x="318" y="150" width="8" height="710" fill="#C8B468"/>
+  <rect x="388" y="150" width="8" height="710" fill="#C8B468"/>
+  <rect x="498" y="150" width="8" height="710" fill="#C8B468"/>
+  <rect x="178" y="350" width="320" height="8" fill="#C8B468"/>
+  <rect x="178" y="560" width="320" height="8" fill="#C8B468"/>
+  <text x="170" y="480" font-family="'Nunito',sans-serif" font-size="7" fill="#5A4008" text-anchor="middle" font-weight="800" transform="rotate(-90,170,480)">W Lighthouse</text>
+  <text x="240" y="480" font-family="'Nunito',sans-serif" font-size="7" fill="#5A4008" text-anchor="middle" font-weight="800" transform="rotate(-90,240,480)">E Lighthouse</text>
+  <text x="310" y="480" font-family="'Nunito',sans-serif" font-size="7" fill="#5A4008" text-anchor="middle" font-weight="800" transform="rotate(-90,310,480)">Oak St</text>
+  <text x="380" y="480" font-family="'Nunito',sans-serif" font-size="7" fill="#5A4008" text-anchor="middle" font-weight="800" transform="rotate(-90,380,480)">Pine St</text>
+  <text x="490" y="480" font-family="'Nunito',sans-serif" font-size="7" fill="#5A4008" text-anchor="middle" font-weight="800" transform="rotate(-90,490,480)">Sea Bay Walk</text>
+  <text x="315" y="346" font-family="'Nunito',sans-serif" font-size="8" fill="#5A4008" text-anchor="middle" font-weight="800">Maple Ct</text>
+  <text x="315" y="556" font-family="'Nunito',sans-serif" font-size="8" fill="#5A4008" text-anchor="middle" font-weight="800">Cedar Ct</text>
+  <g fill="#C0B07A" stroke="#A89860" stroke-width="0.5" opacity="0.65">
+    <rect x="150" y="160" width="20" height="13" rx="2" opacity="0.5"/><rect x="150" y="200" width="20" height="13" rx="2" opacity="0.5"/>
+    <rect x="150" y="240" width="20" height="13" rx="2" opacity="0.5"/><rect x="150" y="280" width="20" height="13" rx="2" opacity="0.5"/>
+    <rect x="150" y="362" width="20" height="13" rx="2" opacity="0.5"/><rect x="150" y="400" width="20" height="13" rx="2" opacity="0.5"/>
+    <rect x="150" y="440" width="20" height="13" rx="2" opacity="0.5"/><rect x="150" y="480" width="20" height="13" rx="2" opacity="0.5"/>
+    <rect x="150" y="572" width="20" height="13" rx="2" opacity="0.5"/><rect x="150" y="610" width="20" height="13" rx="2" opacity="0.5"/>
+    <rect x="150" y="650" width="20" height="13" rx="2" opacity="0.5"/><rect x="150" y="690" width="20" height="13" rx="2" opacity="0.5"/>
+    <rect x="188" y="162" width="18" height="12" rx="2"/><rect x="212" y="162" width="18" height="12" rx="2"/>
+    <rect x="188" y="192" width="18" height="12" rx="2"/><rect x="212" y="192" width="18" height="12" rx="2"/>
+    <rect x="188" y="222" width="18" height="12" rx="2"/><rect x="212" y="222" width="18" height="12" rx="2"/>
+    <rect x="188" y="252" width="18" height="12" rx="2"/><rect x="212" y="252" width="18" height="12" rx="2"/>
+    <rect x="188" y="282" width="18" height="12" rx="2"/><rect x="212" y="282" width="18" height="12" rx="2"/>
+    <rect x="188" y="312" width="18" height="12" rx="2"/><rect x="212" y="312" width="18" height="12" rx="2"/>
+    <rect x="188" y="362" width="18" height="12" rx="2"/><rect x="212" y="362" width="18" height="12" rx="2"/>
+    <rect x="188" y="395" width="18" height="12" rx="2"/><rect x="212" y="395" width="18" height="12" rx="2"/>
+    <rect x="188" y="428" width="18" height="12" rx="2"/><rect x="212" y="428" width="18" height="12" rx="2"/>
+    <rect x="188" y="461" width="18" height="12" rx="2"/><rect x="212" y="461" width="18" height="12" rx="2"/>
+    <rect x="188" y="494" width="18" height="12" rx="2"/><rect x="212" y="494" width="18" height="12" rx="2"/>
+    <rect x="188" y="527" width="18" height="12" rx="2"/><rect x="212" y="527" width="18" height="12" rx="2"/>
+    <rect x="188" y="572" width="18" height="12" rx="2"/><rect x="212" y="572" width="18" height="12" rx="2"/>
+    <rect x="188" y="605" width="18" height="12" rx="2"/><rect x="212" y="605" width="18" height="12" rx="2"/>
+    <rect x="188" y="638" width="18" height="12" rx="2"/><rect x="212" y="638" width="18" height="12" rx="2"/>
+    <rect x="188" y="671" width="18" height="12" rx="2"/><rect x="212" y="671" width="18" height="12" rx="2"/>
+    <rect x="188" y="704" width="18" height="12" rx="2"/><rect x="212" y="704" width="18" height="12" rx="2"/>
+    <rect x="258" y="162" width="18" height="12" rx="2"/><rect x="282" y="162" width="18" height="12" rx="2"/>
+    <rect x="258" y="192" width="18" height="12" rx="2"/><rect x="282" y="192" width="18" height="12" rx="2"/>
+    <rect x="258" y="222" width="18" height="12" rx="2"/><rect x="282" y="222" width="18" height="12" rx="2"/>
+    <rect x="258" y="252" width="18" height="12" rx="2"/><rect x="282" y="252" width="18" height="12" rx="2"/>
+    <rect x="258" y="282" width="18" height="12" rx="2"/><rect x="282" y="282" width="18" height="12" rx="2"/>
+    <rect x="258" y="312" width="18" height="12" rx="2"/><rect x="282" y="312" width="18" height="12" rx="2"/>
+    <rect x="258" y="362" width="18" height="12" rx="2"/><rect x="282" y="362" width="18" height="12" rx="2"/>
+    <rect x="258" y="395" width="18" height="12" rx="2"/><rect x="282" y="395" width="18" height="12" rx="2"/>
+    <rect x="258" y="428" width="18" height="12" rx="2"/><rect x="282" y="428" width="18" height="12" rx="2"/>
+    <rect x="258" y="461" width="18" height="12" rx="2"/><rect x="282" y="461" width="18" height="12" rx="2"/>
+    <rect x="258" y="494" width="18" height="12" rx="2"/><rect x="282" y="494" width="18" height="12" rx="2"/>
+    <rect x="258" y="527" width="18" height="12" rx="2"/><rect x="282" y="527" width="18" height="12" rx="2"/>
+    <rect x="258" y="572" width="18" height="12" rx="2"/><rect x="282" y="572" width="18" height="12" rx="2"/>
+    <rect x="258" y="605" width="18" height="12" rx="2"/><rect x="282" y="605" width="18" height="12" rx="2"/>
+    <rect x="258" y="638" width="18" height="12" rx="2"/><rect x="282" y="638" width="18" height="12" rx="2"/>
+    <rect x="258" y="671" width="18" height="12" rx="2"/><rect x="282" y="671" width="18" height="12" rx="2"/>
+    <rect x="258" y="704" width="18" height="12" rx="2"/><rect x="282" y="704" width="18" height="12" rx="2"/>
+    <rect x="328" y="162" width="18" height="12" rx="2"/><rect x="352" y="162" width="18" height="12" rx="2"/>
+    <rect x="328" y="192" width="18" height="12" rx="2"/><rect x="352" y="192" width="18" height="12" rx="2"/>
+    <rect x="328" y="222" width="18" height="12" rx="2"/><rect x="352" y="222" width="18" height="12" rx="2"/>
+    <rect x="328" y="252" width="18" height="12" rx="2"/><rect x="352" y="252" width="18" height="12" rx="2"/>
+    <rect x="328" y="282" width="18" height="12" rx="2"/><rect x="352" y="282" width="18" height="12" rx="2"/>
+    <rect x="328" y="312" width="18" height="12" rx="2"/><rect x="352" y="312" width="18" height="12" rx="2"/>
+    <rect x="328" y="362" width="18" height="12" rx="2"/><rect x="352" y="362" width="18" height="12" rx="2"/>
+    <rect x="328" y="395" width="18" height="12" rx="2"/><rect x="352" y="395" width="18" height="12" rx="2"/>
+    <rect x="328" y="428" width="18" height="12" rx="2"/><rect x="352" y="428" width="18" height="12" rx="2"/>
+    <rect x="328" y="461" width="18" height="12" rx="2"/><rect x="352" y="461" width="18" height="12" rx="2"/>
+    <rect x="328" y="494" width="18" height="12" rx="2"/><rect x="352" y="494" width="18" height="12" rx="2"/>
+    <rect x="328" y="527" width="18" height="12" rx="2"/><rect x="352" y="527" width="18" height="12" rx="2"/>
+    <rect x="328" y="572" width="18" height="12" rx="2"/><rect x="352" y="572" width="18" height="12" rx="2"/>
+    <rect x="328" y="605" width="18" height="12" rx="2"/><rect x="352" y="605" width="18" height="12" rx="2"/>
+    <rect x="328" y="638" width="18" height="12" rx="2"/><rect x="352" y="638" width="18" height="12" rx="2"/>
+    <rect x="328" y="671" width="18" height="12" rx="2"/><rect x="352" y="671" width="18" height="12" rx="2"/>
+    <rect x="328" y="704" width="18" height="12" rx="2"/><rect x="352" y="704" width="18" height="12" rx="2"/>
+    <rect x="399" y="200" width="14" height="11" rx="2"/><rect x="399" y="228" width="14" height="11" rx="2"/>
+    <rect x="399" y="256" width="14" height="11" rx="2"/><rect x="399" y="284" width="14" height="11" rx="2"/>
+    <rect x="399" y="312" width="14" height="11" rx="2"/><rect x="399" y="362" width="14" height="11" rx="2"/>
+    <rect x="399" y="395" width="14" height="11" rx="2"/><rect x="399" y="428" width="14" height="11" rx="2"/>
+    <rect x="399" y="461" width="14" height="11" rx="2"/><rect x="399" y="494" width="14" height="11" rx="2"/>
+    <rect x="399" y="527" width="14" height="11" rx="2"/><rect x="399" y="572" width="14" height="11" rx="2"/>
+    <rect x="399" y="605" width="14" height="11" rx="2"/><rect x="399" y="638" width="14" height="11" rx="2"/>
+    <rect x="399" y="671" width="14" height="11" rx="2"/><rect x="399" y="704" width="14" height="11" rx="2"/>
+    <rect x="482" y="200" width="14" height="11" rx="2"/><rect x="482" y="228" width="14" height="11" rx="2"/>
+    <rect x="482" y="256" width="14" height="11" rx="2"/><rect x="482" y="284" width="14" height="11" rx="2"/>
+    <rect x="482" y="312" width="14" height="11" rx="2"/><rect x="482" y="362" width="14" height="11" rx="2"/>
+    <rect x="482" y="395" width="14" height="11" rx="2"/><rect x="482" y="428" width="14" height="11" rx="2"/>
+    <rect x="482" y="461" width="14" height="11" rx="2"/><rect x="482" y="494" width="14" height="11" rx="2"/>
+    <rect x="482" y="527" width="14" height="11" rx="2"/><rect x="482" y="572" width="14" height="11" rx="2"/>
+    <rect x="482" y="605" width="14" height="11" rx="2"/><rect x="482" y="638" width="14" height="11" rx="2"/>
+    <rect x="482" y="671" width="14" height="11" rx="2"/><rect x="482" y="704" width="14" height="11" rx="2"/>
+    <rect x="508" y="200" width="16" height="11" rx="2"/><rect x="508" y="228" width="16" height="11" rx="2"/>
+    <rect x="508" y="256" width="16" height="11" rx="2"/><rect x="508" y="284" width="16" height="11" rx="2"/>
+    <rect x="508" y="312" width="16" height="11" rx="2"/><rect x="508" y="362" width="16" height="11" rx="2"/>
+    <rect x="508" y="395" width="16" height="11" rx="2"/><rect x="508" y="428" width="16" height="11" rx="2"/>
+    <rect x="508" y="461" width="16" height="11" rx="2"/><rect x="508" y="494" width="16" height="11" rx="2"/>
+    <rect x="508" y="527" width="16" height="11" rx="2"/><rect x="508" y="572" width="16" height="11" rx="2"/>
+    <rect x="508" y="605" width="16" height="11" rx="2"/><rect x="508" y="638" width="16" height="11" rx="2"/>
+    <rect x="508" y="671" width="16" height="11" rx="2"/><rect x="508" y="704" width="16" height="11" rx="2"/>
+  </g>
+  <rect x="318" y="82" width="70" height="115" fill="#4A8EC0"/>
+  <rect x="328" y="92" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/><rect x="328" y="101" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/>
+  <rect x="328" y="110" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/><rect x="328" y="119" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/>
+  <rect x="328" y="128" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/><rect x="328" y="137" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/>
+  <rect x="328" y="146" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/>
+  <rect x="348" y="88" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/><rect x="348" y="97" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/>
+  <rect x="348" y="106" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/><rect x="348" y="115" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/>
+  <rect x="348" y="124" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/><rect x="348" y="133" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/>
+  <rect x="348" y="142" width="14" height="5" rx="1" fill="#E8E8D8" opacity="0.9"/>
+  <rect x="318" y="82" width="5" height="115" fill="#8A6830"/>
+  <rect x="383" y="82" width="5" height="115" fill="#8A6830"/>
+  <rect x="318" y="82" width="70" height="6" rx="1" fill="#8A6830"/>
+  ${glowRing(ml[1],18)}
+  <g class="map-lm" data-lm="theinn">
+    <rect x="282" y="148" width="34" height="26" rx="3" fill="#E8B84A" stroke="#C49020" stroke-width="2"/>
+    <line x1="282" y1="158" x2="316" y2="158" stroke="#C49020" stroke-width="1" opacity="0.5"/>
+    <line x1="282" y1="166" x2="316" y2="166" stroke="#C49020" stroke-width="1" opacity="0.5"/>
+    <text x="299" y="186" font-family="'Nunito',sans-serif" font-size="8" fill="#4A3000" text-anchor="middle" font-weight="800">The Inn</text>
+  </g>
+  ${glowRing(ml[2],16)}
+  <g class="map-lm" data-lm="thedive">
+    <rect x="257" y="148" width="24" height="26" rx="3" fill="#D4784A" stroke="#A85030" stroke-width="2"/>
+    <line x1="257" y1="158" x2="281" y2="158" stroke="#A85030" stroke-width="1" opacity="0.5"/>
+    <line x1="257" y1="166" x2="281" y2="166" stroke="#A85030" stroke-width="1" opacity="0.5"/>
+    <text x="269" y="186" font-family="'Nunito',sans-serif" font-size="8" fill="#3A1000" text-anchor="middle" font-weight="800">The Dive</text>
+  </g>
+  ${glowRing(ml[3],26)}
+  <g class="map-lm" data-lm="park">
+    <rect x="257" y="192" width="60" height="40" rx="3" fill="#5A9A60" stroke="#3A7A40" stroke-width="2"/>
+    <line x1="287" y1="192" x2="287" y2="232" stroke="#E8F8E8" stroke-width="1.5"/>
+    <line x1="257" y1="212" x2="317" y2="212" stroke="#E8F8E8" stroke-width="1.5"/>
+    <text x="287" y="245" font-family="'Nunito',sans-serif" font-size="8" fill="#1A4A1A" text-anchor="middle" font-weight="800">Kismet Park</text>
+  </g>
+  <rect x="326" y="568" width="62" height="132" fill="#D4C88A"/>
+  ${glowRing(ml[4],32)}
+  <g class="map-lm" data-lm="camelot">
+    <rect x="326" y="568" width="62" height="130" rx="6" fill="#4A8C5C" opacity="0.2" stroke="#4A8C5C" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="357" y="563" font-family="'Lilita One',serif" font-size="10" fill="#2A5A3C" text-anchor="middle">CAMELOT</text>
+    <rect x="332" y="574" width="46" height="8" rx="2" fill="#9AA8C4" stroke="#6A80A0" stroke-width="1.2"/>
+    <rect x="332" y="582" width="9" height="22" rx="2" fill="#9AA8C4" stroke="#6A80A0" stroke-width="1.2"/>
+    <rect x="369" y="582" width="9" height="22" rx="2" fill="#9AA8C4" stroke="#6A80A0" stroke-width="1.2"/>
+    <g transform="translate(357,638)">
+      <rect x="-22" y="-8" width="44" height="16" rx="3" fill="#C4A87A" stroke="#9A8050" stroke-width="1.5" transform="rotate(45)"/>
+      <rect x="-22" y="-8" width="44" height="16" rx="3" fill="#C4A87A" stroke="#9A8050" stroke-width="1.5" transform="rotate(-45)"/>
+    </g>
+    <polygon points="368,605 370,612 378,612 372,616 374,623 368,619 362,623 364,616 358,612 366,612" fill="#FFD700" stroke="#C9A030" stroke-width="1"/>
+    <text x="381" y="610" font-family="'Nunito',sans-serif" font-size="8" fill="#2A5A3C" font-weight="800">House</text>
+  </g>
+  <rect x="178" y="718" width="8" height="28" fill="#C8B468" opacity="0.6"/>
+  <rect x="248" y="718" width="8" height="28" fill="#C8B468" opacity="0.6"/>
+  <rect x="318" y="718" width="8" height="28" fill="#C8B468" opacity="0.6"/>
+  <rect x="388" y="718" width="8" height="28" fill="#C8B468" opacity="0.6"/>
+  <rect x="498" y="718" width="8" height="28" fill="#C8B468" opacity="0.6"/>
+  <path d="M0,716 Q100,708 200,714 Q300,720 400,714 Q500,708 600,714 Q660,718 700,716 L700,732 Q660,728 600,724 Q500,716 400,722 Q300,728 200,722 Q100,716 0,726 Z" fill="#E0D090"/>
+  ${glowRing(ml[5],36)}
+  <rect x="0" y="730" width="700" height="66" fill="#EEE090"/>
+  <g class="map-lm" data-lm="beach"><rect x="0" y="730" width="700" height="66" fill="transparent"/></g>
+  <path d="M0,745 Q175,737 350,745 Q525,753 700,745" fill="none" stroke="#D4C060" stroke-width="1.2"/>
+  <path d="M0,762 Q175,754 350,762 Q525,770 700,762" fill="none" stroke="#D4C060" stroke-width="1.2"/>
+  <text x="350" y="785" font-family="'Lilita One',serif" font-size="13" fill="#B0A020" text-anchor="middle" letter-spacing="2">KISMET BEACH</text>
+  <rect x="0" y="796" width="700" height="34" fill="#6BAFD4"/>
+  <path d="M0,804 Q175,796 350,804 Q525,812 700,804" fill="none" stroke="#4A9AB8" stroke-width="1" opacity="0.6"/>
+  <text x="350" y="820" font-family="'Lilita One',serif" font-size="11" fill="#1A5A7A" text-anchor="middle" letter-spacing="2">ATLANTIC OCEAN</text>
+  <g transform="translate(660,748)">
+    <circle r="22" fill="#F5EDD0" stroke="#C9A84C" stroke-width="2"/>
+    <text x="0" y="-7" font-family="'Lilita One',serif" font-size="12" fill="#4A3000" text-anchor="middle">N</text>
+    <text x="0" y="16" font-family="'Nunito',sans-serif" font-size="9" fill="#7A6030" text-anchor="middle" font-weight="800">S</text>
+    <text x="-13" y="5" font-family="'Nunito',sans-serif" font-size="9" fill="#7A6030" text-anchor="middle" font-weight="800">W</text>
+    <text x="13" y="5" font-family="'Nunito',sans-serif" font-size="9" fill="#7A6030" text-anchor="middle" font-weight="800">E</text>
+    <polygon points="0,-18 2.5,-4 0,0 -2.5,-4" fill="#C05030"/>
+    <polygon points="0,18 2.5,4 0,0 -2.5,4" fill="#7A6030"/>
+  </g>
+  <rect x="12" y="738" width="128" height="42" rx="8" fill="#1A5A7A" opacity="0.92"/>
+  <text x="76" y="756" font-family="'Lilita One',serif" font-size="15" fill="#E8F4FA" text-anchor="middle">KISMET</text>
+  <text x="76" y="772" font-family="'Nunito',sans-serif" font-size="9" fill="#A8D4EA" text-anchor="middle" font-weight="700">Fire Island, NY</text>
+  ${glowRing(ml[0],20)}
+  <g class="map-lm" data-lm="marina">
+    <rect x="318" y="82" width="70" height="115" fill="transparent"/>
+    <rect x="478" y="88" width="45" height="76" fill="transparent"/>
+  </g>
+  </svg></div>
+  <p style="font-size:11px;color:var(--muted);margin-top:8px;font-weight:600;">&#9432; Tap any landmark to see badge progress. Glowing outlines mean someone has earned that badge.</p>`;
+}
+function initMapTip(){
+  const outer=document.getElementById('mapOuter');if(!outer)return;
+  const tip=document.getElementById('mapTip'),box=document.getElementById('mapTipBox');
+  outer.querySelectorAll('.map-lm').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{const lm=MAP_LANDMARKS.find(l=>l.id===el.getAttribute('data-lm'));if(!lm)return;box.innerHTML=landmarkPopupHTML(lm);tip.classList.add('on');posTip(e,outer,tip);});
+    el.addEventListener('mousemove',e=>posTip(e,outer,tip));
+    el.addEventListener('mouseleave',()=>tip.classList.remove('on'));
+    el.addEventListener('click',e=>{const lm=MAP_LANDMARKS.find(l=>l.id===el.getAttribute('data-lm'));if(!lm)return;box.innerHTML=landmarkPopupHTML(lm);tip.classList.toggle('on');posTip(e,outer,tip);});
+  });
+}
+function posTip(e,outer,tip){const r=outer.getBoundingClientRect();let x=e.clientX-r.left+14,y=e.clientY-r.top-10;if(x+180>r.width)x=e.clientX-r.left-190;tip.style.left=x+'px';tip.style.top=y+'px';}
+
+// ── MODALS ────────────────────────────────────────────────────────────────────
+function openLogModal(){
+  document.getElementById('logPerson').innerHTML=PEOPLE.map(p=>`<option${p===currentUser?' selected':''}>` + p + `</option>`).join('');
+  document.getElementById('logBadge').innerHTML=BADGES.map(b=>`<option value="${b.id}">${b.name}</option>`).join('');
+  renderLogTierOptions();
+  document.getElementById('logModal').classList.add('open');
+}
+function renderLogTierOptions(){
+  const bid=document.getElementById('logBadge').value;
+  const badge=BADGES.find(b=>b.id===bid);
+  document.getElementById('logTier').innerHTML=badge.tiers.map(t=>`<option value="${t.key}">${t.label} — ${t.desc.slice(0,45)}${t.desc.length>45?'...':''}</option>`).join('');
+  renderLogProgressField();
+}
+function renderLogProgressField(){
+  const bid=document.getElementById('logBadge').value,tkey=document.getElementById('logTier').value;
+  const badge=BADGES.find(b=>b.id===bid),tier=badge.tiers.find(t=>t.key===tkey);
+  const wrap=document.getElementById('logProgressWrap');
+  if(tier.fishAuto||tier.legendAuto){wrap.innerHTML=`<p style="font-size:12px;color:var(--muted);font-weight:600">This tier is tracked automatically.</p>`;return;}
+  if(tier.type==='boolean'||tier.max===1){wrap.innerHTML='';return;}
+  wrap.innerHTML=`<span class="modal-label">Add how many ${tier.unit||'progress'}?</span><input type="number" id="logAmount" value="1" min="1" max="${tier.max}" style="width:120px"/>`;
+}
+function saveLog(){
+  const person=document.getElementById('logPerson').value;
+  const bid=document.getElementById('logBadge').value,tkey=document.getElementById('logTier').value;
+  const badge=BADGES.find(b=>b.id===bid),tier=badge.tiers.find(t=>t.key===tkey);
+  if(tier.fishAuto||tier.legendAuto){closeModal('logModal');return;}
+  const amtEl=document.getElementById('logAmount'),amt=amtEl?Math.max(1,parseInt(amtEl.value)||1):1;
+  const prev=getP(person,bid,tkey);
+  if(tier.type==='boolean'||tier.max===1)setP(person,bid,tkey,1);
+  else setP(person,bid,tkey,Math.min(tier.max,prev+amt));
+  const next=getP(person,bid,tkey);
+  saveState();
+  closeModal('logModal');
+  if(next>=tier.max && prev<tier.max){
+    openPhotoPrompt(person,bid,tkey,badge.name,tier.desc,badge.icon);
+  } else {
+    renderMain();
+  }
+}
+function openFishModal(fish){
+  pendingFish=fish;
+  document.getElementById('fishModalTitle').textContent='Log catch: '+fish;
+  document.getElementById('fishPerson').innerHTML=PEOPLE.map(p=>`<option>${p}</option>`).join('');
+  document.getElementById('fishModal').classList.add('open');
+}
+function saveFish(){
+  const person=document.getElementById('fishPerson').value;
+  if(!state.fish[person])state.fish[person]=[];
+  if(!state.fish[person].includes(pendingFish))state.fish[person].push(pendingFish);
+  if(getP(person,'fishing','bronze')===0)setP(person,'fishing','bronze',1);
+  saveState();closeModal('fishModal');renderMain();
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(e=>console.log('SW error:',e));
+  });
+}
+</script>
+</body>
+</html>
