@@ -250,15 +250,15 @@ main{padding:1.25rem 1.25rem 5rem;max-width:1100px;margin:0 auto;}
     <div style="text-align:center;margin-bottom:4px;font-size:2rem" id="photoModalEmoji">🎉</div>
     <div class="modal-title" style="text-align:center;margin-bottom:4px;" id="photoModalTitle">Badge Earned!</div>
     <div style="text-align:center;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;" id="photoModalSub"></div>
-    <div class="photo-upload-area" onclick="document.getElementById('photoFileInput').click()">
-      <div style="font-size:2rem">📷</div>
-      <div style="font-size:13px;font-weight:800;color:var(--wood);margin-top:6px;">Take photo</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:3px;">Camera or photo library (optional)</div>
-      <input type="file" id="photoFileInput" accept="image/*" onchange="handlePhotoSelect(event)">
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:10px;">
+      <button class="modal-submit" onclick="document.getElementById('photoCameraInput').click()" style="display:flex;align-items:center;justify-content:center;gap:8px;">📷 Take Photo</button>
+      <button class="modal-submit" onclick="document.getElementById('photoLibraryInput').click()" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--ocean);">🖼️ Choose from Camera Roll</button>
+      <button class="btn-skip" onclick="saveWithoutPhoto()">Skip</button>
     </div>
+    <input type="file" id="photoCameraInput" accept="image/*" capture="environment" onchange="handlePhotoSelect(event)" style="display:none">
+    <input type="file" id="photoLibraryInput" accept="image/*" onchange="handlePhotoSelect(event)" style="display:none">
     <img id="photoPreview" class="photo-preview" alt="Preview"/>
     <button class="modal-submit" id="photoSaveBtn" onclick="saveWithPhoto()">Save with Photo</button>
-    <button class="btn-skip" onclick="saveWithoutPhoto()">Skip — save without photo</button>
   </div>
 </div>
 
@@ -700,7 +700,7 @@ function openPhotoPrompt(person,badgeId,tierKey,badgeName,tierDesc,badgeIcon){
   document.getElementById('photoModalSub').textContent=tierDesc;
   document.getElementById('photoPreview').style.display='none';
   document.getElementById('photoPreview').src='';
-  document.getElementById('photoFileInput').value='';
+  document.getElementById('photoCameraInput').value='';document.getElementById('photoLibraryInput').value='';
   document.getElementById('photoSaveBtn').textContent='Save with Photo';
   document.getElementById('photoModal').classList.add('open');
 }
@@ -714,7 +714,7 @@ function openPhotoPromptForExisting(person,badgeId,tierKey,badgeName,tierDesc,ba
   document.getElementById('photoModalSub').textContent=`${badgeName} — ${tierKey.charAt(0).toUpperCase()+tierKey.slice(1)}: ${tierDesc}`;
   document.getElementById('photoPreview').style.display='none';
   document.getElementById('photoPreview').src='';
-  document.getElementById('photoFileInput').value='';
+  document.getElementById('photoCameraInput').value='';document.getElementById('photoLibraryInput').value='';
   document.getElementById('photoSaveBtn').textContent='Save Photo';
   document.getElementById('photoModal').classList.add('open');
 }
